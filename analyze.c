@@ -1,3 +1,10 @@
+/****************************************************/
+/* File: analyze.c                                  */
+/* Semantic analyzer implementation                 */
+/* for the C- compiler                              */
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
+/****************************************************/
 
 #include "globals.h"
 #include "symtab.h"
@@ -8,7 +15,7 @@
 static int location = 0;
 char* escopo = "global";
 
-void atualizaEscopo(TreeNode * t)
+void UpdateScope(TreeNode * t)
 {
   //printf("atualiza Escopo\n");
   if (t->child[0] != NULL && t->child[0]->kind.exp == FunDeclK) escopo = t->child[0]->attr.name;
@@ -24,7 +31,7 @@ static void traverse( TreeNode * t,
 {
   //printf("Traverse\n");
   if (t != NULL)
-  { atualizaEscopo(t);
+  { UpdateScope(t);
     preProc(t);
     { int i;
       for (i=0; i < MAXCHILDREN; i++)

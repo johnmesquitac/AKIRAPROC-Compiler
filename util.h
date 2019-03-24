@@ -1,3 +1,10 @@
+/****************************************************/
+/* File: util.h                                     */
+/* Utility functions for the C- compiler            */
+/* Adapted from:                                    */
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
+/****************************************************/
 
 #ifndef _UTIL_H_
 #define _UTIL_H_

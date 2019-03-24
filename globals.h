@@ -1,3 +1,11 @@
+/****************************************************/
+/* File: globals.h                                  */
+/* Global types and vars for C- compiler            */
+/* must come before other include files             */
+/* Adapted from:                                    */
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
+/****************************************************/
 
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
@@ -56,7 +64,7 @@ extern int lineno; /* source line number for listing */
 
 typedef enum {StmtK,ExpK} NodeKind;
 typedef enum {IfK,WhileK,AssignK,ReturnK} StmtKind;
-typedef enum {OpK,ConstK,IdK,VarDeclK,FunDeclK,AtivK,TypeK,VetorK,ParamK, AssignElK} ExpKind;
+typedef enum {OpK,ConstK,IdK,VarDeclK,FunDeclK,AtivK,TypeK,VetorK,ParamK} ExpKind;
 
 /* ExpType is used for type checking */
 typedef enum {Void,Integer,Boolean} ExpType;

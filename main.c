@@ -1,3 +1,10 @@
+/****************************************************/
+/* File: main.c                                     */
+/* Main program for C- compiler                     */
+/* Adapted from:                                    */
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
+/****************************************************/
 
 #include "globals.h"
 

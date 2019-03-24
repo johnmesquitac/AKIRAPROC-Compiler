@@ -1,3 +1,8 @@
+/****************************************************/
+/* File: util.c                                     */
+/* Utility function implementation                  */
+/****************************************************/
+
 /* macros to increase/decrease indentation */
 #define INDENT indentno+=2
 #define UNINDENT indentno-=2
@@ -20,25 +25,25 @@ static int indentno = 0;
      case INT:
      case WHILE:
      case VOID: fprintf(listing,"reserved word: %s\n",tokenString);break;
-     case IGUAL: fprintf(listing,"=\n"); break;
-     case EQ: fprintf(listing,"==\n"); break;
-     case DIFERENTE: fprintf(listing,"!=\n"); break;
-     case MENOR: fprintf(listing,"<\n"); break;
-     case MAIOR: fprintf(listing,">\n"); break;
-     case MENORIGUAL: fprintf(listing,"<=\n"); break;
-     case MAIORIGUAL: fprintf(listing,">=\n"); break;
-     case PE: fprintf(listing,"(\n"); break;
-     case PD: fprintf(listing,")\n"); break;
-     case CE: fprintf(listing,"[\n"); break;
-     case CD: fprintf(listing,"]\n"); break;
+     case EQUAL: fprintf(listing,"=\n"); break;
+     case EQEQ: fprintf(listing,"==\n"); break;
+     case DIF: fprintf(listing,"!=\n"); break;
+     case LT: fprintf(listing,"<\n"); break;
+     case GT: fprintf(listing,">\n"); break;
+     case LEQUAL: fprintf(listing,"<=\n"); break;
+     case GREQUAL: fprintf(listing,">=\n"); break;
+     case LPAREN: fprintf(listing,"(\n"); break;
+     case RPAREN: fprintf(listing,")\n"); break;
+     case LCOL: fprintf(listing,"[\n"); break;
+     case RCOL: fprintf(listing,"]\n"); break;
      case COLE: fprintf(listing,"{\n"); break;
      case COLD: fprintf(listing,"}\n"); break;
-     case PONTOEVIRGULA: fprintf(listing,";\n"); break;
-     case VIRGULA: fprintf(listing,",\n"); break;
-     case MAIS: fprintf(listing,"+\n"); break;
-     case MENOS: fprintf(listing,"-\n"); break;
+     case SEMICOL: fprintf(listing,";\n"); break;
+     case COMMA: fprintf(listing,",\n"); break;
+     case PLUS: fprintf(listing,"+\n"); break;
+     case MINUS: fprintf(listing,"-\n"); break;
      case MULT: fprintf(listing,"*\n"); break;
-     case DIV: fprintf(listing,"/\n"); break;
+     case OVER: fprintf(listing,"/\n"); break;
      case ENDFILE: fprintf(listing,"EOF\n"); break;
      case NUM:
        fprintf(listing,

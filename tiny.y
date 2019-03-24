@@ -1,3 +1,9 @@
+/****************************************************/
+/* File: tiny.y                                     */
+/* The TINY Yacc/Bison specification file           */
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
+/****************************************************/
 
 %{
 #define YYPARSER /* distinguishes Yacc output from other code files */
@@ -17,12 +23,12 @@ int yyerror(char *msg);
 
 %token IF ELSE WHILE RETURN VOID
 %right INT
-%token IGUAL EQ DIFERENTE MENOR MAIOR MAIORIGUAL MENORIGUAL MAIS MENOS MULT DIV PE PD CE CD COLE COLD VIRGULA PONTOEVIRGULA
+%token EQUAL EQEQ DIF LT GT GREQUAL LEQUAL PLUS MINUS MULT OVER LPAREN RPAREN LCOL RCOL COLE COLD COMMA SEMICOL
 %token ID NUM
 %token ERROR ENDFILE
 
 /*daqui pra baixo tem new coisas*/
-%nonassoc PD
+%nonassoc RPAREN
 %nonassoc ELSE
 
 %% /* Grammar for TINY */
@@ -50,7 +56,7 @@ dec 	    : var-dec { $$ = $1 ;}
 	    ;
 
 var-dec : INT identificador
-          PONTOEVIRGULA
+          SEMICOL
           {
             $$ = newExpNode(TypeK);
             $$->attr.name = "INT";
@@ -59,7 +65,7 @@ var-dec : INT identificador
             $2->kind.exp = VarDeclK;
             $2->type = INTTYPE;
           }
-	      | INT identificador CE numero CD PONTOEVIRGULA
+	      | INT identificador LCOL numero RCOL SEMICOL
             {
               $$ = newExpNode(TypeK);
               $$->attr.name = "INT";
@@ -86,7 +92,7 @@ tipo-espec  : INT
               }
             ;
 
-fun-dec : INT identificador PE params PD composto-dec
+fun-dec : INT identificador LPAREN params RPAREN composto-dec
             {
               $$ = newExpNode(TypeK);
               $$->attr.name = "INT";
@@ -97,7 +103,7 @@ fun-dec : INT identificador PE params PD composto-dec
               $2->child[0] = $4;
               $2->child[1] = $6;
             }
-        | VOID identificador PE params PD composto-dec
+        | VOID identificador LPAREN params RPAREN composto-dec
                     {
                       $$ = newExpNode(TypeK);
                       $$->attr.name = "VOID";
@@ -120,7 +126,7 @@ params : param-list { $$ = $1; }
           }
        ;
 
-param-list : param-list VIRGULA param-list
+param-list : param-list COMMA param-list
               {
                 YYSTYPE t = $1;
                 if (t != NULL){
@@ -141,7 +147,7 @@ param : tipo-espec identificador
           $2->kind.exp = ParamK;
           $$->size = 0;
         }
-      | tipo-espec identificador CE CD
+      | tipo-espec identificador LCOL RCOL
         {
           $$ = $1;
           $$->child[0] = $2;
@@ -201,17 +207,17 @@ stmt : exp-dec { $$ = $1; }
      | retorno-dec { $$ = $1; }
      ;
 
-exp-dec : exp PONTOEVIRGULA { $$ = $1; }
-        |  PONTOEVIRGULA {}
+exp-dec : exp SEMICOL { $$ = $1; }
+        |  SEMICOL {}
         ;
 
-sel-dec : IF PE exp PD stmt
+sel-dec : IF LPAREN exp RPAREN stmt
           {
             $$ = newStmtNode(IfK);
             $$->child[0] = $3;
             $$->child[1] = $5;
           }
-        | IF PE exp PD stmt ELSE stmt
+        | IF LPAREN exp RPAREN stmt ELSE stmt
           {
             $$ = newStmtNode(IfK);
             $$->child[0] = $3;
@@ -220,7 +226,7 @@ sel-dec : IF PE exp PD stmt
           }
         ;
 
-it-dec : WHILE PE exp PD stmt
+it-dec : WHILE LPAREN exp RPAREN stmt
         {
           $$ = newStmtNode(WhileK);
           $$->child[0] = $3;
@@ -228,15 +234,15 @@ it-dec : WHILE PE exp PD stmt
         }
         ;
 
-retorno-dec : RETURN PONTOEVIRGULA { $$ = newStmtNode(ReturnK); }
-            | RETURN exp PONTOEVIRGULA
+retorno-dec : RETURN SEMICOL { $$ = newStmtNode(ReturnK); }
+            | RETURN exp SEMICOL
               {
                 $$ = newStmtNode(ReturnK);
                 $$->child[0] = $2;
               }
             ;
 
-exp : var IGUAL exp
+exp : var EQUAL exp
       {
         $$ = newStmtNode(AssignK);
         $$->child[0] = $1;
@@ -248,7 +254,7 @@ exp : var IGUAL exp
     ;
 
 var : identificador { $$ = $1; }
-    | identificador CE exp CD
+    | identificador LCOL exp RCOL
       {
         $$ = newExpNode(VetorK);
         $$->attr.name = $1->attr.name;
@@ -265,35 +271,35 @@ simples-exp : soma-exp relacional soma-exp
             | soma-exp { $$ = $1; }
             ;
 
-relacional : EQ
+relacional : EQEQ
               {
                 $$ = newExpNode(OpK);
-                $$->attr.op = EQ;
+                $$->attr.op = EQEQ;
               }
-           | MENOR
+           | LT
               {
                 $$ = newExpNode(OpK);
-                $$->attr.op = MENOR;
+                $$->attr.op = LT;
               }
-           | MAIOR
+           | GT
               {
                 $$ = newExpNode(OpK);
-                $$->attr.op = MAIOR;
+                $$->attr.op = GT;
               }
-           | MAIORIGUAL
+           | GREQUAL
               {
                 $$ = newExpNode(OpK);
-                $$->attr.op = MAIORIGUAL;
+                $$->attr.op = GREQUAL;
               }
-           | MENORIGUAL
+           | LEQUAL
               {
                 $$ = newExpNode(OpK);
-                $$->attr.op = MENORIGUAL;
+                $$->attr.op = LEQUAL;
               }
-           | DIFERENTE
+           | DIF
               {
                 $$ = newExpNode(OpK);
-                $$->attr.op = DIFERENTE;
+                $$->attr.op = DIF;
               }
            ;
 
@@ -305,15 +311,15 @@ soma-exp : soma-exp soma termo {
          | termo { $$ = $1; }
          ;
 
-soma : MAIS
+soma : PLUS
        {
          $$ = newExpNode(OpK);
-         $$->attr.op = MAIS;
+         $$->attr.op = PLUS;
        }
-     | MENOS
+     | MINUS
         {
           $$ = newExpNode(OpK);
-          $$->attr.op = MENOS;
+          $$->attr.op = MINUS;
         }
      ;
 
@@ -331,27 +337,27 @@ mult : MULT
          $$ = newExpNode(OpK);
          $$->attr.op = MULT;
        }
-     | DIV
+     | OVER
         {
           $$ = newExpNode(OpK);
-          $$->attr.op = DIV;
+          $$->attr.op = OVER;
         }
      ;
 
-fator : PE exp PD { $$ = $2; }
+fator : LPAREN exp RPAREN { $$ = $2; }
       | var { $$ = $1; }
       | ativ { $$ = $1; }
       | numero { $$ = $1; }
       ;
 
-ativ : identificador PE arg-list PD
+ativ : identificador LPAREN arg-list RPAREN
         {
           $$ = newExpNode(AtivK);
           $$->attr.name = $1->attr.name;
           $$->child[0] = $3;
 
         }
-        | identificador PE PD
+        | identificador LPAREN RPAREN
          {
            $$ = newExpNode(AtivK);
            $$->attr.name = $1->attr.name;
@@ -359,7 +365,7 @@ ativ : identificador PE arg-list PD
      ;
 
 
-arg-list : arg-list VIRGULA exp
+arg-list : arg-list COMMA exp
             {
               YYSTYPE t = $1;
               if (t != NULL){

@@ -1,9 +1,16 @@
+/****************************************************/
+/* File: symtab.c                                   */
+/* Symbol table implementation for the C- compiler  */
+/* (allows only one symbol table)                   */
+/*Symbol table's implemented as a chained hash table*/
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
+/****************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "symtab.h"
-
 
 /* SIZE is the size of the hash table */
 #define SIZE 211
@@ -67,7 +74,7 @@ void st_insert( char * name, int lineno, int op, char* escopo, dataTypes DType, 
     l = l->next;
   }
 
-  //Para inserir: não achou outra declaração, se achou verificar se o escopo é diferente e não é uma função
+  //Para inserir: não achou outra declaração, se achou verificar se o escopo é DIF e não é uma função
   if ( l == NULL || (op != 0 && l->escopo != escopo && l->IType != FUN)) /* variable not yet in table */
   {
     l = (BucketList) malloc(sizeof(struct BucketListRec));

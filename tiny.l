@@ -1,3 +1,10 @@
+/****************************************************/
+/* File: cminus.l                                   */
+/* Lex specification for C-                         */
+/* Adapted from:                                    */
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
+/****************************************************/
 
 %{
 #include "globals.h"
@@ -17,32 +24,31 @@ whitespace  [ \t\r]+
 
 %%
 
-"void"		{return VOID;}
+"void"		      {return VOID;}
 "if"            {return IF;}
-"int"            {return INT;}
-"return"            {return RETURN;}
-"while"            {return WHILE;}
+"int"           {return INT;}
+"return"        {return RETURN;}
+"while"         {return WHILE;}
 "else"          {return ELSE;}
-
-"="            {return IGUAL;}
-"=="             {return EQ;}
-"!="            { return DIFERENTE;}
-"<"             {return MENOR;}
-">"	          	{return MAIOR;}
-">="	          	{return MAIORIGUAL;}
-"<="	          	{return MENORIGUAL;}
-"+"             {return MAIS;}
-"-"             {return MENOS;}
+"="             {return EQUAL;}
+"=="            {return EQEQ;}
+"!="            {return DIF;}
+"<"             {return LT;}
+">"	          	{return GT;}
+">="	          {return GREQUAL;}
+"<="	          {return LEQUAL;}
+"+"             {return PLUS;}
+"-"             {return MINUS;}
 "*"             {return MULT;}
-"/"             {return DIV;}
-"("             {return PE;}
-")"             {return PD;}
-"["             {return CE;}
-"]"             {return CD;}
+"/"             {return OVER;}
+"("             {return LPAREN;}
+")"             {return RPAREN;}
+"["             {return LCOL;}
+"]"             {return RCOL;}
 "{"             {return COLE;}
 "}"             {return COLD;}
-";"             {return PONTOEVIRGULA;}
-","             {return VIRGULA;}
+";"             {return SEMICOL;}
+","             {return COMMA;}
 {number}        {return NUM;}
 {identifier}    {return ID;}
 {newline}       {lineno++;}
@@ -63,7 +69,6 @@ whitespace  [ \t\r]+
                   } while (f);
                 }
 .               {return ERROR;}
-
 %%
 
 TokenType getToken(void)
