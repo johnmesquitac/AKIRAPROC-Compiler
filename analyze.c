@@ -35,8 +35,6 @@ static void traverse( TreeNode * t,
     traverse(t->sibling,preProc,postProc);
   }
 }
-
-
 /* nullProc is a do-nothing procedure to
  * generate preorder-only or postorder-only
  * traversals from traverse
@@ -55,7 +53,6 @@ static void insertNode( TreeNode * t)
   // printf("insertNode\n");
   switch (t->nodekind){
     case StmtK:
-      //printf("StmtK\n");
       if(t->kind.stmt == AssignK)
       {
         //  printf("AssignK\n");
@@ -71,19 +68,13 @@ static void insertNode( TreeNode * t)
       }
       break;
     case ExpK:
-      //printf("ExpK\n");
       switch(t->kind.exp )
       {
         case TypeK:
-          //printf("TypeK\n");
-          //printf("info: %s %d \n", t->attr.name, t->kind.exp);
-
           if(t->child[0] != NULL){
             switch (t->child[0]->kind.exp)
             {
-              //printf("entrou\n");
               case VarDeclK:
-                //printf("vardecl\n");
                 if (st_lookup(t->attr.name) == -1)
                 /* não encontrado na tabela, inserir*/
                   st_insert(t->child[0]->attr.name,t->lineno,location++, escopo,INTTYPE, VAR);
@@ -92,9 +83,7 @@ static void insertNode( TreeNode * t)
                   st_insert(t->child[0]->attr.name,t->lineno,0, escopo,INTTYPE, VAR);
                 break;
               case FunDeclK:
-
                 if (st_lookup(t->attr.name) == -1){
-                 // printf("%s: não encontrado na tabela, inserir \n", t->child[0]->attr.name);
                   st_insert(t->child[0]->attr.name,t->lineno,location++, "global",t->child[0]->type,FUN);}
                 else
                 /* encontrado na tabela, verificar escopo */

@@ -1,6 +1,13 @@
+/* macros to increase/decrease indentation */
+#define INDENT indentno+=2
+#define UNINDENT indentno-=2
 
 #include "globals.h"
 #include "util.h"
+/* Variable indentno is used by printTree to
+ * store current number of spaces to indent
+ */
+static int indentno = 0;
 
 /* Procedure printToken prints a token
  * and its lexeme to the listing file
@@ -13,7 +20,6 @@
      case INT:
      case WHILE:
      case VOID: fprintf(listing,"reserved word: %s\n",tokenString);break;
-
      case IGUAL: fprintf(listing,"=\n"); break;
      case EQ: fprintf(listing,"==\n"); break;
      case DIFERENTE: fprintf(listing,"!=\n"); break;
@@ -103,22 +109,12 @@ char * copyString(char * s)
   return t;
 }
 
-/* Variable indentno is used by printTree to
- * store current number of spaces to indent
- */
-static int indentno = 0;
-
-/* macros to increase/decrease indentation */
-#define INDENT indentno+=2
-#define UNINDENT indentno-=2
-
 /* printSpaces indents by printing spaces */
 static void printSpaces(void)
 { int i;
   for (i=0;i<indentno;i++)
     fprintf(listing," ");
 }
-
 /* procedure printTree prints a syntax tree to the
  * listing file using indentation to indicate subtrees
  */
@@ -142,7 +138,7 @@ static void printSpaces(void)
            fprintf(listing,"Return\n");
            break;
          default:
-           fprintf(listing,"Unknown ExpNode kind\n");
+           fprintf(listing,"Unknown StmtNode kind\n");
            break;
        }
      }
@@ -177,14 +173,14 @@ static void printSpaces(void)
            fprintf(listing,"Id: %s\n",tree->attr.name);
            break; 
           case VetorK:
-          fprintf(listing, "VETOR: %s\n", tree->attr.name);
+          fprintf(listing, "Vetor: %s\n", tree->attr.name);
 	        break;
           default:
            fprintf(listing,"Unknown ExpNode kind\n");
            break;
        }
      }
-     else fprintf(listing,"Unknown node kind\n");
+     else fprintf(listing,"Unknown Node kind\n");
      for (i=0;i<MAXCHILDREN;i++)
           printTree(tree->child[i]);
      tree = tree->sibling;
