@@ -73,7 +73,7 @@ var-dec : INT identificador
               $$->child[0] = $2;
               $2->kind.exp = VarDeclK;
               $2->type = INTTYPE;
-            }
+            } | error {yyerrok;}
 	      ;
 
 tipo-espec  : INT
@@ -208,7 +208,7 @@ stmt : exp-dec { $$ = $1; }
      ;
 
 exp-dec : exp SEMICOL { $$ = $1; }
-        |  SEMICOL {}
+        |  SEMICOL {} | error {yyerrok;}
         ;
 
 sel-dec : IF LPAREN exp RPAREN stmt
