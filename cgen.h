@@ -1,80 +1,44 @@
 /****************************************************/
+/* Lab de Compiladores - Prof. Galvão               */
 /* File: cgen.h                                     */
-/* The code generator interface to the TINY compiler*/
+/* The code generator interface                     */
+/* for the C- compiler                              */
+/* Adapted from:                                    */
 /* Compiler Construction: Principles and Practice   */
 /* Kenneth C. Louden                                */
 /****************************************************/
 
-#include "globals.h"
-
 #ifndef _CGEN_H_
 #define _CGEN_H_
 
-typedef enum {IntConst, String} OperandKind;
+#define nlabel_size 3
+#define ntemp_size 3
 
-typedef enum instrucao {ADD, SUB, MULT, DIV, MOD,
-    BITW_AND, BITW_OR, BITW_XOR, BITW_NOT, LOGIC_AND, LOGIC_OR,
-    SHFT_LF, SHFT_RT, VEC, VEC_ADDR,
-    EQ, NE, LT, LET, GT, GET, ASN,
-    FUNC, RTN, GET_PARAM, SET_PARAM, CALL, PARAM_LIST,
-    JPF, GOTO, LBL, SYSCALL, HALT} InstructionKind;
+typedef enum {  opADD, opSUB, opMULT, opDIV, opLT, opLEQUAL, opGT, opGREQUAL, opAND, opOR, opASSIGN, opALLOC, opIMMED, opLOAD, opSTORE,
+                opVEC, opGOTO, opIFF, opRET, opFUN, opEND, opPARAM, opCALL, opARG, opLAB, opHLT } OpKind;
+typedef enum {  Empty, IntConst, String } AddrKind;
 
-typedef struct operand {
-    OperandKind kind;
-    union {
-        int val;
-        struct {
-            char * name;
-            struct ScopeRec * scope;
-        } variable;
-    } contents;
-} * Operand;
+typedef struct {
+  AddrKind kind;
+  union {
+    int val;
+    struct {
+      char * name;
+      char * scope;
+    } var;
+  } contents;
+} Address;
 
-/* Estrutura Quádrupla que armazena os dados do código
- * de três endereços
- */
-typedef struct Quad {
-    InstructionKind instruction;
-    int linha;
-    int display;
-    int offset;
-    Operand op1;
-    Operand op2;
-    Operand op3;
-    struct Quad * next;
-} * Quadruple;
+typedef struct {
+  OpKind op;
+  Address addr1, addr2, addr3;
+} Quad;
 
-typedef struct Location {
-    Quadruple * quad;
-    struct Location * next;
-} * LocationStack;
-
-typedef struct Param {
-    int * count;
-    struct Param * next;
-} * ParamStack;
-
-Operand createOperand(void);
-
-Quadruple * insertQuad(Quadruple q);
-
-Quadruple createQuad(InstructionKind instruction, Operand op1, Operand op2, Operand op3);
-
-void pushLocation(LocationStack ls);
-
-void popLocation();
-
-LocationStack createLocation(Quadruple * quad);
-
-void updateLocation(Operand op);
-
-void pushParam(int * count);
-
-void popParam();
-
-void printIntermediateCode();
-
-Quadruple getCodigoIntermediario(void);
+typedef struct QuadListRec {
+  int location;
+  Quad quad;
+  struct QuadListRec * next;
+} * QuadList;
 
 /* Procedure codeGen generates code to a code
  * file by traversal of the syntax tree. The
@@ -82,9 +46,8 @@ Quadruple getCodigoIntermediario(void);
  * of the code file, and is used to print the
  * file name as a comment in the code file
  */
-void codeGen(TreeNode * syntaxTree, char * codefile, CodeInfo codeInfo);
+void codeGen(TreeNode * syntaxTree, char * codefile);
 
-void verificaFimInstrucaoAnterior(void);
+QuadList getIntermediate();
 
 #endif
-

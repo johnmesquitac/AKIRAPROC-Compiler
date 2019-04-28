@@ -1,150 +1,106 @@
 /****************************************************/
+/* Lab de Compiladores - Prof. Galvão               */
 /* File: code.c                                     */
-/* Author: Diego Ferreira                           */
+/* C- Code emitting utilities                       */
+/* implementation for the C- compiler               */
+/* Adapted from:                                    */
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
 /****************************************************/
 
 #include "globals.h"
 #include "code.h"
 
-const char * toStringInstruction(enum instrucao i) {
-    const char * strings[] = {
-        "addition", "subtraction", "multiplication", "division", "modulo",
-        "bitwise_and", "bitwise_or", "bitwise_xor", "not", "logical_and", "logical_or",
-        "shift_left", "shift_right", "vector_value", "vector_address",
-        "equal", "not_equal", "less_than", "less_than_equal_to",
-        "greater_than", "greater_than_equal_to", "assign",
-        "function", "return", "get_param", "set_param", "call", "param_list",
-        "jump_if_false", "goto", "label", "syscall", "halt"
-    };
-    return strings[i];
+/* TM location number for current instruction emission */
+static int emitLoc = 0 ;
+
+/* Highest TM location emitted so far
+   For use in conjunction with emitSkip,
+   emitBackup, and emitRestore */
+static int highEmitLoc = 0;
+
+/* Procedure emitComment prints a comment line 
+ * with comment c in the code file
+ */
+void emitComment( char * c ) { 
+  if (TraceCode) fprintf(code,"// %s\n",c);
+  printf("%s\n", c);
 }
 
-const char * toStringOpcode(Opcode op) {
-    const char * strings[] = {
-        "addi", "subi", "muli", "divi", "modi",
-        "andi", "ori", "xori", "not", "landi", "lori",
-        "slli", "srli",
-        "mov", "lw", "li", "la", "sw",
-        "in", "out", "jf",        
-        "ldk", "sdk", "lam", "sam", "sim",
-        "mmuLowerIM", "mmuUpperIM", "mmuSelect",
-        "lcd", "lcdPgms", "lcdCurr",
-        "gic", "cic", "gip", "preIO",
-        "syscall", "exec", "execAgain", // AO ALTERAR AQUI, LEMBRAR DE ALTERAR TAMBÉM O CÓDIGO DO SO, QUE USA O OPCODE DO SYSCALL
-        "j", "jtm", "jal", "halt",
-        "rtype"
-    };
-    return strings[op];
+void emitQuad() {
+  printf("quad\n");
+  fprintf(code,"quad");
 }
 
-const char * toStringFunction(Function func) {
-    const char * strings[] = {
-        "add", "sub", "mul", "div", "mod",
-        "and", "or", "xor", "land", "lor",
-        "sll", "srl",
-        "eq", "ne", "lt", "let", "gt", "get",
-        "jr", 
-        "dont_care"
-    };
-    return strings[func];
-}
+/* Procedure emitRO emits a register-only
+ * TM instruction
+ * op = the opcode
+ * r = target register
+ * s = 1st source register
+ * t = 2nd source register
+ * c = a comment to be printed if TraceCode is TRUE
+ */
+void emitRO( char *op, int r, int s, int t, char *c)
+{ fprintf(code,"%3d:  %5s  %d,%d,%d ",emitLoc++,op,r,s,t);
+  if (TraceCode) fprintf(code,"\t%s",c) ;
+  fprintf(code,"\n") ;
+  if (highEmitLoc < emitLoc) highEmitLoc = emitLoc ;
+} /* emitRO */
 
-const char * toStringRegName(RegisterName rn) {
-    const char * strings[] = {
-        "$rz", "$a0", "$a1", "$a2", "$a3", "$s0", "$s1", "$s2",
-        "$s3", "$s4", "$s5", "$s6", "$s7", "$s8", "$s9", "$t0",
-        "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8",
-        "$v0", "$k0", "$k1", "$gpb", "$spb", "$gp", "$sp", "$ra"
-    };
-    return strings[rn];
-}
+/* Procedure emitRM emits a register-to-memory
+ * TM instruction
+ * op = the opcode
+ * r = target register
+ * d = the offset
+ * s = the base register
+ * c = a comment to be printed if TraceCode is TRUE
+ */
+void emitRM( char * op, int r, int d, int s, char *c)
+{ fprintf(code,"%3d:  %5s  %d,%d(%d) ",emitLoc++,op,r,d,s);
+  if (TraceCode) fprintf(code,"\t%s",c) ;
+  fprintf(code,"\n") ;
+  if (highEmitLoc < emitLoc)  highEmitLoc = emitLoc ;
+} /* emitRM */
 
-const char * toBinaryOpcode(Opcode op) {
-    const char * strings[] = {
-        // addi,  subi,     muli,     divi,     modi
-        "000001", "000010", "000011", "000100", "000101",
-        // andi,  ori,      xori,     not,      landi,    lori
-        "000110", "000111", "001000", "001001", "001010", "001011",
-        // slli,  srli,
-        "001100", "001101",
-        // mov,   lw,       li,       la,       sw
-        "001110", "001111", "010000", "010001", "010010",
-        // in,    out,      jf,
-        "010011", "010100", "010101",
-        // ldk,   sdk,      lam,      sam,      sim,
-        "010110", "010111", "011000", "011001", "011010",
-        // mmuLowerIM, mmuUpperIM, mmuSelect,
-        "011011", "011100", "011101",
-        // lcd,   lcdPgms,  lcdCurr,
-        "011110", "011111", "100000",
-        // gic,   cic,      gip,      preIO,
-        "100001", "100010", "100011", "100100",
-        // syscall, exec,   execAgain,
-        "111001", "111010", "111011",
-        // j,     jtm,      jal,      halt
-        "111100", "111101", "111110", "111111",
-        // rtype
-        "000000"
-    };
-    return strings[op];
-}
+/* Function emitSkip skips "howMany" code
+ * locations for later backpatch. It also
+ * returns the current code position
+ */
+int emitSkip( int howMany)
+{  int i = emitLoc;
+   emitLoc += howMany ;
+   if (highEmitLoc < emitLoc)  highEmitLoc = emitLoc ;
+   return i;
+} /* emitSkip */
 
-const char * toBinaryFunction(Function func) {
-    const char * strings[] = {
-        // add,   sub,      mul,      div,      mod
-        "000000", "000001", "000010", "000011", "000100",
-        // and,   or,       xor,      land,     lor,
-        "000101", "000110", "000111", "001000", "001001",
-        // sll,   srl
-        "001010", "001011",
-        // eq,    ne,       lt,       let,      gt,       get
-        "001100", "001101", "001110", "001111", "010000", "010001",
-        // jr,
-        "010010",
-        // dont_care,
-        "XXXXXX"
-    };
-    return strings[func];
-}
+/* Procedure emitBackup backs up to 
+ * loc = a previously skipped location
+ */
+void emitBackup( int loc)
+{ if (loc > highEmitLoc) emitComment("BUG in emitBackup");
+  emitLoc = loc ;
+} /* emitBackup */
 
-const char * toBinaryRegister(RegisterName rn) {
-    const char * strings[] = {
-        // "$rz", "$a0", "$a1"," $a2", "$a3", "$s0", "$s1", "$s2",
-        "00000", "00001", "00010", "00011", "00100", "00101", "00110", "00111",
-        // "$s3", "$s4", "$s5", "$s6", "$s7", "$s8", "$s9", "$t0",
-        "01000", "01001", "01010", "01011", "01100", "01101", "01110", "01111",
-        // "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8",
-        "10000", "10001", "10010", "10011", "10100", "10101", "10110", "10111",
-        // "$v0", "$k0", "$k1", "$gpb", "$spb", "$gp", "$sp", "$ra"
-        "11000", "11001", "11010", "11011", "11100", "11101", "11110", "11111"
-    };
-    return strings[rn];
-}
+/* Procedure emitRestore restores the current 
+ * code position to the highest previously
+ * unemitted position
+ */
+void emitRestore(void)
+{ emitLoc = highEmitLoc;}
 
-
-void emitSpaces(int indent){
-    int i;
-    for(i = 0; i < indent; ++i) {
-        fprintf(code, " ");
-    }
-}
-
-void emitCode(const char * c) {
-    fprintf(code, "%s\n", c);
-}
-
-void emitBinary(const char * c) {
-    fprintf(binary_file, "%s\n", c);
-}
-
-void emitComment(const char * c, int indent) {
-    if (TraceCode) {
-        emitSpaces(indent);
-        fprintf(code, "# %s\n", c);
-    }
-}
-
-void emitObjectCode(const char * c, int indent) {
-    emitSpaces(indent);
-    fprintf(code, "%s\n", c);
-}
+/* Procedure emitRM_Abs converts an absolute reference 
+ * to a pc-relative reference when emitting a
+ * register-to-memory TM instruction
+ * op = the opcode
+ * r = target register
+ * a = the absolute location in memory
+ * c = a comment to be printed if TraceCode is TRUE
+ */
+void emitRM_Abs( char *op, int r, int a, char * c)
+{ fprintf(code,"%3d:  %5s  %d,%d(%d) ",
+               emitLoc,op,r,a-(emitLoc+1),pc);
+  ++emitLoc ;
+  if (TraceCode) fprintf(code,"\t%s",c) ;
+  fprintf(code,"\n") ;
+  if (highEmitLoc < emitLoc) highEmitLoc = emitLoc ;
+} /* emitRM_Abs */

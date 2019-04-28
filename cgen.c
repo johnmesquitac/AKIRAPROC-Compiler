@@ -1,8 +1,9 @@
 /****************************************************/
+/* Lab de Compiladores - Prof. Galvão               */
 /* File: cgen.c                                     */
 /* The code generator implementation                */
-/* for the TINY compiler                            */
-/* (generates code for the TM machine)              */
+/* for the C- compiler                              */
+/* Adapted from:                                    */
 /* Compiler Construction: Principles and Practice   */
 /* Kenneth C. Louden                                */
 /****************************************************/
@@ -11,568 +12,485 @@
 #include "symtab.h"
 #include "code.h"
 #include "cgen.h"
+#include "assembly.h"
 
-/* number of arguments
- * of current function call to be inserted
- * in the intermediate code instruction list
- */
-ParamStack paramHead = NULL;
+/* tmpOffset is the memory offset for temps
+   It is decremented each time a temp is
+   stored, and incremeted when loaded again
+*/
+static int tmpOffset = 0;
 
-/* Cabeça da Lista de representações quádruplas */
-Quadruple head = NULL;
-
-/* Cabeça da Lista de representações quádruplas */
-LocationStack locationHead = NULL;
-
-/* Numero para geração de nomes de variáveis temporárias */
-static int temporario = 1;
-
-/* Numero para geração de labels */
-static int label = 1;
-
-Operand operandoAtual;
-
-InstructionKind instrucaoAtual;
-
-/* Útil para saber quando deve-se retornar o endereço do vetor */
-Quadruple ultimaQuadrupla;
-
-static int linha = 0;
-
-/* temporary string to help printing text */
-static char tempString[20];
-
-/* Protótipo para o gerador de código interno recursivo */
+/* prototype for internal recursive code generator */
 static void cGen (TreeNode * tree);
 
-static char * createLabelName() {
-    char * temp = (char *) malloc(5);
-    sprintf(temp, "L%d", label);
-    ++label;
-    return temp;
+
+QuadList head = NULL;
+
+int location = 0;
+int mainLocation;
+
+int nlabel = 0;
+int ntemp = 0;
+int nparams = -1;
+
+Address aux;
+Address var;
+Address offset;
+Address empty;
+
+/* verificar esse vetor */
+const char * OpKindNames[] =  { "add", "sub", "mult", "div", "lt", "lequal", "gt", "grequal", "and", "or", "assign", "alloc", "immed", "load", "store",
+                              "vec", "goto", "iff", "ret", "fun", "end", "param", "call", "arg", "lab", "hlt" };
+
+
+void quad_insert (OpKind op, Address addr1, Address addr2, Address addr3) {
+  Quad quad;
+  quad.op = op;
+  quad.addr1 = addr1;
+  quad.addr2 = addr2;
+  quad.addr3 = addr3;
+  QuadList new = (QuadList) malloc(sizeof(struct QuadListRec));
+  new->location = location;
+  new->quad = quad;
+  new->next = NULL;
+  if (head == NULL) {
+    head = new;
+  }
+  else {
+    QuadList q = head;
+    while (q->next != NULL) q = q->next;
+    q->next = new;
+  }
+  location ++;
 }
 
-static char * createTemporaryOperandName() {
-    char * temp = (char *) malloc(5);
-    sprintf(temp, "t%d", temporario);
-    ++temporario;
-    return temp;
+int quad_update(int loc, Address addr1, Address addr2, Address addr3) {
+  QuadList q = head;
+  while (q != NULL) {
+    if (q->location == loc) break;
+    q = q->next;
+  }
+  if (q == NULL) 
+    return 0;
+  else {
+    q->quad.addr1 = addr1;
+    q->quad.addr2 = addr2;
+    q->quad.addr3 = addr3;
+    return 1;
+  }
 }
 
-Operand createOperand(void) {
-    Operand op = (Operand) malloc(sizeof(struct operand));
-    return op;
+char * newLabel() {
+  //char label[nlabel_size + 2];
+  char * label = (char *) malloc((nlabel_size + 3) * sizeof(char));
+  sprintf(label, "L%d", nlabel);
+  nlabel++;
+  return label;
 }
 
-static Operand createTemporaryOperand() {
-    Operand temp = createOperand();
-    temp->kind = String;
-    temp->contents.variable.scope = NULL;
-    temp->contents.variable.name = createTemporaryOperandName();
-    return temp;
+char * newTemp() {
+  //char temp[ntemp_size + 2];
+  char * temp = (char *) malloc((ntemp_size + 3) * sizeof(char));
+  sprintf(temp, "$t%d", ntemp);
+  ntemp = (ntemp + 1) % nregtemp;
+  return temp;
+}
+
+Address addr_createEmpty() {
+  Address addr;
+  addr.kind = Empty;
+  addr.contents.var.name = NULL;
+  addr.contents.var.scope = NULL;
+  return addr;
+}
+
+Address addr_createIntConst(int val) {
+  Address addr;
+  addr.kind = IntConst;
+  addr.contents.val = val;
+  return addr;
+}
+
+Address addr_createString(char * name, char * scope) {
+  Address addr;
+  addr.kind = String;
+  addr.contents.var.name = (char *) malloc(strlen(name) * sizeof(char));
+  strcpy(addr.contents.var.name, name);
+  addr.contents.var.scope = (char *) malloc(strlen(scope) * sizeof(char));
+  strcpy(addr.contents.var.scope, scope);
+  return addr;
 }
 
 /* Procedure genStmt generates code at a statement node */
-static void genStmt(TreeNode * tree) {
-    Quadruple * q;
-    Operand op1, op2, op3;
-    TreeNode * p1, * p2, * p3;
-    switch (tree->kind.stmt) {
-        case INTEGERK:
-            p1 = tree->child[0];
-            cGen(p1);
-            break; /* INTEGERK */
+static void genStmt( TreeNode * tree)
+{ TreeNode * p1, * p2, * p3;
+  Address addr1, addr2, addr3;
+  Address aux1, aux2;
+  int loc1, loc2, loc3;
+  char * label;
+  char * temp;
+  
+  switch (tree->kind.stmt) {
 
-        case VOIDK:
-            p1 = tree->child[0];
-            cGen(p1);
-            break; /* VOIDK */
+    case IfK:
+      if (TraceCode) emitComment("-> if");
+      p1 = tree->child[0] ;
+      p2 = tree->child[1] ;
+      p3 = tree->child[2] ;
+      // condicao if
+      cGen(p1);
+      addr1 = aux;
+      // se condição falsa?
+      loc1 = location;
+      quad_insert(opIFF, addr1, empty, empty);
+      // if
+      cGen(p2);
+      // vai para o final?
+      loc2 = location;
+      quad_insert(opGOTO, empty, empty, empty);
+      // fim do if
+      label = newLabel();
+      quad_insert(opLAB, addr_createString(label, tree->scope), empty, empty);
+      // se condição falsa vem pra cá
+      quad_update(loc1, addr1, addr_createString(label, tree->scope), empty);
+      // else
+      cGen(p3);
+      if (p3 != NULL) {
+        // vai para o final?
+        loc3 = location;
+        quad_insert(opGOTO, empty, empty, empty);
+      }
+      label = newLabel();
+      // final
+      quad_insert(opLAB, addr_createString(label, tree->scope), empty, empty);
+      quad_update(loc2, addr_createString(label, tree->scope), empty, empty);
+      if (p3 != NULL)
+        quad_update(loc3, addr_createString(label, tree->scope), empty, empty);
+      if (TraceCode)  emitComment("<- if");
+      break;
 
-        case IFK:
-            p1 = tree->child[0];
-            p2 = tree->child[1];
-            p3 = tree->child[2];
-            /* Gera código para a expressão de teste */
-            cGen(p1);
-            /* Atribui como o primeiro operando */
-            op1 = operandoAtual;
-            /* Atribui o tipo de instrução */
-            instrucaoAtual = JPF;
-            /* Cria e insere uma nova representação em código intermediário */
-            q = insertQuad(createQuad(instrucaoAtual, op1, NULL, NULL));
-            /* Salva a IR do if para atualizar com o label que representa o fim do bloco then */
-            pushLocation(createLocation(q));
-            /* Gera código para o bloco then */
-            cGen(p2);
-            /* set second operand */
-            op2 = createOperand();
-            op2->kind = String;
-            op2->contents.variable.name = createLabelName();
-            op2->contents.variable.scope = tree->kind.var.scope;
-            /* update if intermediate code instruction */
-            updateLocation(op2);
-            popLocation();
+    case WhileK:
+      if (TraceCode) emitComment("-> while");
+      p1 = tree->child[0] ;
+      p2 = tree->child[1] ;
+      // inicio do while
+      label = newLabel();
+      quad_insert(opLAB, addr_createString(label, tree->scope), empty, empty);
+      // condicao while
+      cGen(p1);
+      addr1 = aux;
+      // se condição falsa?
+      loc1 = location;
+      quad_insert(opIFF, addr1, empty, empty);
+      // while
+      cGen(p2);
+      loc3 = location;
+      quad_insert(opGOTO, addr_createString(label, tree->scope), empty, empty);
+      // final
+      label = newLabel();
+      quad_insert(opLAB, addr_createString(label, tree->scope), empty, empty);
+      // se condição falsa vem pra cá
+      quad_update(loc1, addr1, addr_createString(label, tree->scope), empty);
+      if (TraceCode)  emitComment("<- while");
+      break;
 
-            if(p3 != NULL) {
-                q = insertQuad(createQuad(GOTO, NULL, NULL, NULL));
-                pushLocation(createLocation(q));
-            }
+    case AssignK:
+      if (TraceCode) emitComment("-> assign");
+      p1 = tree->child[0];
+      p2 = tree->child[1];
+      // var
+      cGen(p1);
+      addr1 = aux;
+      aux1 = var;
+      aux2 = offset;
+      // exp
+      cGen(p2);
+      addr2 = aux;
+      quad_insert(opASSIGN, addr1, addr2, empty);
+      quad_insert(opSTORE, aux1, aux2, addr1);
+      if (TraceCode)  emitComment("<- assign");
+      break;
 
-            /* Label usado para marcar o fim do bloco then */
-            insertQuad(createQuad(LBL, op2, NULL, NULL));
-            cGen(p3);
+    case ReturnK:
+      if (TraceCode) emitComment("-> return");
+      p1 = tree->child[0];
+      cGen(p1);
+      // se tem retorno
+      if (p1 != NULL)
+        addr1 = aux;
+      //se não tem retorno
+      else
+        addr1 = empty;
+      quad_insert(opRET, addr1, empty, empty);
+      if (TraceCode) emitComment("<- return");
+      break;
 
-            if(p3 != NULL) {
-                op1 = createOperand();
-                op1->kind = String;
-                op1->contents.variable.name = createLabelName();
-                op1->contents.variable.scope = tree->kind.var.scope;
-                /* update if intermediate code instruction */
-                updateLocation(op1);
-                popLocation();
-
-                /* Label usado para marcar o fim do bloco else */
-                insertQuad(createQuad(LBL, op1, NULL, NULL));
-            }
-            break; /* IFK */
-
-        case WHILEK:
-            p1 = tree->child[0];
-            p2 = tree->child[1];
-
-            op1 = createOperand();
-            op1->kind = String;
-            op1->contents.variable.name = createLabelName();
-            op1->contents.variable.scope = tree->kind.var.scope;
-            insertQuad(createQuad(LBL, op1, NULL, NULL));
-            /* build code for test expression */
-            cGen(p1);
-            /* set as first operand */
-            op2 = operandoAtual;
-            /* set intermediate code kind */
-            instrucaoAtual = JPF;
-            /* Cria e insere uma nova representação em código intermediário */
-            q = insertQuad(createQuad(instrucaoAtual, op2, NULL, NULL));
-            /* Salva a IR do if para atualizar com o label que representa o fim do bloco then */
-            pushLocation(createLocation(q));
-            /* build code for while block */
-            cGen(p2);
-            /* go back to while test expression */
-            /* set intermediate code kind */
-            instrucaoAtual = GOTO;
-            /* Cria e insere uma nova representação em código intermediário */
-            insertQuad(createQuad(instrucaoAtual, op1, NULL, NULL));
-
-            op3 = createOperand();
-            op3->kind = String;
-            op3->contents.variable.name = createLabelName();
-            op3->contents.variable.scope = tree->kind.var.scope;
-            insertQuad(createQuad(LBL, op3, NULL, NULL));
-            updateLocation(op3);
-            popLocation();
-            break; /* WHILEK */
-
-        case RETURNK:
-            p1 = tree->child[0];
-            /* Gera código para a expressão */
-            cGen(p1);
-            if(p1) {
-                /* Atribui como o primeiro operando */
-                op1 = operandoAtual;
-            } else {
-                /* Não retorna nada */
-                op1 = NULL;
-            }
-            /* Atribui o tipo de instrução */
-            instrucaoAtual = RTN;
-            /* Cria e insere uma nova representação em código intermediário */
-            insertQuad(createQuad(instrucaoAtual, op1, NULL, NULL));
-            break; /* RETURNK */
-
-        case COMPK:
-            p1 = tree->child[0];
-            if(p1) { /* Parâmetros */
-                cGen(p1);
-            }
-            p2 = tree->child[1];
-            if(p2) { /* Expressões */
-                cGen(p2);
-            }
-            break; /* COMPK */
-    }
+    default:
+      break;
+  }
 } /* genStmt */
 
 /* Procedure genExp generates code at an expression node */
-static void genExp(TreeNode * tree) {
-    TreeNode * p1, * p2;
-    Operand op1, op2, op3;
-    switch (tree->kind.exp) {
-        case ATRIBK:
-            p1 = tree->child[0];
-            p2 = tree->child[1];
-            /* Gera código para o operando da direita */
-            cGen(p2);
-            /* Atribui como o segundo operando */
-            op2 = operandoAtual;
-            /* Gera código para o operando da esquerda */
-            cGen(p1);
-            /* Atribui como o primeiro operando */
-            op1 = operandoAtual;
-            op3 = NULL;
+static void genExp( TreeNode * tree)
+{ TreeNode * p1, * p2, * p3;
+  Address addr1, addr2, addr3;
+  int loc1, loc2, loc3;
+  char * label;
+  char * temp;
+  char * s = "";
 
-            // ------------------- Caso especial ------------------- //
-            /* Na atribuição, se o operando da esquerda for um vetor, deve-se
-             * fazer um store na posição de memória dessa variável
-             */
-            if(p1->node == VARK && p1->kind.var.varKind == VECTORK) {
-                ultimaQuadrupla->instruction = VEC_ADDR;
-                // Se o índice for uma constante, adiciona o offset como o 3º operando (para código objeto)
-                if(ultimaQuadrupla->op2->kind == IntConst) {
-                    op3 = createOperand();
-                    op3->kind = IntConst;
-                    op3->contents.val = ultimaQuadrupla->op2->contents.val;
-                    op1 = ultimaQuadrupla->op1;
-                }
-            }
+  switch (tree->kind.exp) {
+    
+    case ConstK:
+      if (TraceCode) emitComment("-> Const");
+      addr1 = addr_createIntConst(tree->attr.val);
+      temp = newTemp();
+      aux = addr_createString(temp, s);
+      quad_insert(opIMMED, aux, addr1, empty);
+      if (TraceCode)  emitComment("<- Const");
+      break;
+    
+    case IdK:
+      if (TraceCode) emitComment("-> Id");
+      //temp = newTemp();
+      aux = addr_createString(tree->attr.name, tree->scope);
+      p1 = tree->child[0];
+      if (p1 != NULL) {
+        temp = newTemp();
+        addr1 = addr_createString(temp, tree->scope);
+        addr2 = aux;
+        cGen(p1);
+        quad_insert(opVEC, addr1, addr2, aux);
+        var = addr2;
+        offset = aux;
+        aux = addr1;
+      }
+      else {
+        temp = newTemp();
+        addr1 = addr_createString(temp, tree->scope);
+        quad_insert(opLOAD, addr1, aux, empty);
+        var = aux;
+        offset = empty;
+        aux = addr1;
+      }
+      if (TraceCode)  emitComment("<- Id");
+      break;
 
-            if(tree->op != ATRIBUICAO) {
-                switch (tree->op) {
-                    case ATRIB_MAIS:
-                        instrucaoAtual = ADD;
-                        break;
-                    case ATRIB_MENOS:
-                        instrucaoAtual = SUB;
-                        break;
-                    case ATRIB_VEZES:
-                        instrucaoAtual = MULT;
-                        break;
-                    case ATRIB_DIVISAO:
-                        instrucaoAtual = DIV;
-                        break;
-                    case ATRIB_MODULO:
-                        instrucaoAtual = MOD;
-                        break;
-                    case ATRIB_AND:
-                        instrucaoAtual = BITW_AND;
-                        break;
-                    case ATRIB_OR:
-                        instrucaoAtual = BITW_OR;
-                        break;
-                    case ATRIB_XOR:
-                        instrucaoAtual = BITW_XOR;
-                        break;
-                    case ATRIB_SHIFT_LEFT:
-                        instrucaoAtual = SHFT_LF;
-                        break;
-                    case ATRIB_SHIFT_RIGHT:
-                        instrucaoAtual = SHFT_RT;
-                        break;
-                }
-                operandoAtual = createTemporaryOperand();
-                insertQuad(createQuad(instrucaoAtual, op1, op2, operandoAtual));
-                op2 = operandoAtual;
-            }
-            instrucaoAtual = ASN;
-            insertQuad(createQuad(instrucaoAtual, op1, op2, op3));
-            break; /* ATRIBK */
+    case TypeK:
+      break;
 
-        case RELK:
-            p1 = tree->child[0];
-            p2 = tree->child[1];
-            /* Gera código para o operando da esquerda */
-            cGen(p1);
-            /* Atribui como o primeiro operando */
-            op1 = operandoAtual;
-            /* Gera código para o operando da direita */
-            cGen(p2);
-            /* Atribui como o segundo operando */
-            op2 = operandoAtual;
-            switch (tree->op) {
-                case IGUAL:
-                    instrucaoAtual = EQ;
-                    break;
-                case DIFERENTE:
-                    instrucaoAtual = NE;
-                    break;
-                case MENOR:
-                    instrucaoAtual = LT;
-                    break;
-                case MENORIGUAL:
-                    instrucaoAtual = LET;
-                    break;
-                case MAIOR:
-                    instrucaoAtual = GT;
-                    break;
-                case MAIORIGUAL:
-                    instrucaoAtual = GET;
-                    break;
-            }
-            operandoAtual = createTemporaryOperand();
-            insertQuad(createQuad(instrucaoAtual, op1, op2, operandoAtual));
-            break; /* RELK */
+    case FunDeckK:
+      if (TraceCode) emitComment("-> Fun");
+      // ver se é a main
+      if (strcmp(tree->attr.name, "main") == 0)
+        mainLocation = location;
+      if ((strcmp(tree->attr.name, "input") != 0) && (strcmp(tree->attr.name, "output") != 0)) {
+        quad_insert(opFUN, addr_createString(tree->attr.name, tree->scope), empty, empty);
+        // parametros
+        p1 = tree->child[0];
+        cGen(p1);
+        // declaracoes e expressoes
+        p2 = tree->child[1];
+        cGen(p2);
+        quad_insert(opEND, addr_createString(tree->attr.name, tree->scope), empty, empty);
+      }
+      if (TraceCode) emitComment("<- Fun");
+      break;
+    
+    case CallK:
+      if (TraceCode) emitComment("-> Call");
+      //Address a1 = addr_createIntConst(tree->params);
+      // é um parametro
+      nparams = tree->params;
+      p1 = tree->child[0];
+      //params_push(&nparams);
+      while (p1 != NULL) {
+        cGen(p1);
+        quad_insert(opPARAM, aux, empty, empty);
+        //printf("%s %d\n", tree->attr.name, tree->vet);
+        nparams --;
+        p1 = p1->sibling;
+      }
+      nparams = -1;
+      temp = newTemp();
+      aux = addr_createString(temp, tree->scope);
+      quad_insert(opCALL, aux, addr_createString(tree->attr.name, tree->scope), addr_createIntConst(tree->params));
+      
+      if (TraceCode) emitComment("<- Call");
+      break;
+    
+    case ParamK:
+      if (TraceCode) emitComment("-> Param");
+      quad_insert(opARG, addr_createString(tree->attr.name, tree->scope), empty, addr_createString(tree->scope, tree->scope));
+      if (TraceCode) emitComment("<- Param");
+      break;
+    
+    case VarDeckK:
+      if (TraceCode) emitComment("-> Var");
+      //if (tree->vet != -1)
+      if (tree->size != 0)
+        //quad_insert(DECLVEC, addr_createString(tree->attr.name, tree->scope), addr_createIntConst(tree->vet), addr_createString(tree->scope, tree->scope));
+        quad_insert(opALLOC, addr_createString(tree->attr.name, tree->scope), addr_createIntConst(tree->vet), addr_createString(tree->scope, tree->scope));
+      else {
+        //quad_insert(DECLVAR, addr_createString(tree->attr.name, tree->scope), addr_createString(tree->scope, tree->scope), empty);
+        quad_insert(opALLOC, addr_createString(tree->attr.name, tree->scope), addr_createIntConst(1), addr_createString(tree->scope, tree->scope));
+      }
+      if (TraceCode) emitComment("<- Var");
+      break;
 
-        case ARITHK:
-            p1 = tree->child[0];
-            p2 = tree->child[1];
-            /* Gera código para o operando da esquerda */
-            cGen(p1);
-            /* Atribui como o primeiro operando */
-            op1 = operandoAtual;
-            /* Gera código para o operando da direita */
-            cGen(p2);
-            /* Atribui como o segundo operando */
-            op2 = operandoAtual;
-            switch (tree->op) {
-                case MAIS:
-                    instrucaoAtual = ADD;
-                    break;
-                case MENOS:
-                    instrucaoAtual = SUB;
-                    break;
-                case VEZES:
-                    instrucaoAtual = MULT;
-                    break;
-                case DIVISAO:
-                    instrucaoAtual = DIV;
-                    break;
-                case MODULO:
-                    instrucaoAtual = MOD;
-                    break;
-                case SHIFT_LEFT:
-                    instrucaoAtual = SHFT_LF;
-                    break;
-                case SHIFT_RIGHT:
-                    instrucaoAtual = SHFT_RT;
-                    break;
-            }
-            operandoAtual = createTemporaryOperand();
-            insertQuad(createQuad(instrucaoAtual, op1, op2, operandoAtual));
-            break; /* ARITHK */
+    case OpK:
+      if (TraceCode) emitComment("-> Op");
+      p1 = tree->child[0];
+      p2 = tree->child[1];
+         
+      cGen(p1);
+      addr1 = aux;
+      cGen(p2);
+      addr2 = aux;
+      temp = newTemp();
+      aux = addr_createString(temp, tree->scope);
+      switch (tree->attr.op) {
+        case PLUS:
+          quad_insert(opADD, aux, addr1, addr2);
+          break;
+        case MINUS:
+          quad_insert(opSUB, aux, addr1, addr2);
+          break;
+        case TIMES:
+          quad_insert(opMULT, aux, addr1, addr2);
+          break;
+        case OVER:
+          quad_insert(opDIV, aux, addr1, addr2);
+          break;
+        case LT:
+          quad_insert(opLT, aux, addr1, addr2);
+          break;
+        case LEQUAL:
+          quad_insert(opLEQUAL, aux, addr1, addr2);
+          break;
+        case GT:
+          quad_insert(opGT, aux, addr1, addr2);
+          break;
+        case GREQUAL:
+          quad_insert(opGREQUAL, aux, addr1, addr2);
+          break;
+        case EQ:
+          quad_insert(opGREQUAL, aux, addr1, addr2);
+          addr3 = aux;
+          temp = newTemp();
+          aux = addr_createString(temp, tree->scope);
+          quad_insert(opLEQUAL, aux, addr1, addr2);
+          addr1 = addr3;
+          addr2 = aux;
+          temp = newTemp();
+          aux = addr_createString(temp, tree->scope);
+          quad_insert(opAND, aux, addr1, addr2);
+          break;
+        case NEQ:
+          quad_insert(opGT, aux, addr1, addr2);
+          addr3 = aux;
+          temp = newTemp();
+          aux = addr_createString(temp, tree->scope);
+          quad_insert(opLT, aux, addr1, addr2);
+          addr1 = addr3;
+          addr2 = aux;
+          temp = newTemp();
+          aux = addr_createString(temp, tree->scope);
+          quad_insert(opOR, aux, addr1, addr2);
+          break;
+        default:
+          emitComment("BUG: Unknown operator");
+          break;
+      }
+      if (TraceCode)  emitComment("<- Op");
+      break;
 
-        case LOGICK:
-            p1 = tree->child[0];
-            p2 = tree->child[1];
-            /* Gera código para o operando da esquerda */
-            cGen(p1);
-            /* Atribui como o primeiro operando */
-            op1 = operandoAtual;
-            /* Gera código para o operando da direita */
-            cGen(p2);
-            /* Atribui como o segundo operando */
-            op2 = operandoAtual;
-            switch (tree->op) {
-                case LOGICAL_AND:
-                    instrucaoAtual = LOGIC_AND;
-                    break;
-                case LOGICAL_OR:
-                    instrucaoAtual = LOGIC_OR;
-                    break;
-                case AND:
-                    instrucaoAtual = BITW_AND;
-                    break;
-                case OR:
-                    instrucaoAtual = BITW_OR;
-                    break;
-                case XOR:
-                    instrucaoAtual = BITW_XOR;
-                    break;
-            }
-            operandoAtual = createTemporaryOperand();
-            insertQuad(createQuad(instrucaoAtual, op1, op2, operandoAtual));
-            break; /* LOGICK */
-
-        case UNARYK:
-            p1 = tree->child[0];
-            cGen(p1);
-            op1 = operandoAtual;
-            switch (tree->op) {
-                case AND:
-                    instrucaoAtual = BITW_AND;
-                    break;
-                case NOT:
-                    instrucaoAtual = BITW_NOT;
-                    break;
-                case MENOS:
-                    instrucaoAtual = SUB;
-                    break;
-            }
-            operandoAtual = createTemporaryOperand();
-            insertQuad(createQuad(instrucaoAtual, op1, operandoAtual, NULL));
-            break; /* UNARYK */
-    }
+    default:
+      break;
+  }
 } /* genExp */
 
-static void genVar(TreeNode * tree) {
-    Quadruple q;
-    TreeNode * p1, * p2;
-    Operand op1, op2, op3;
-    int qtdParams, offset, display = -1;
-    switch (tree->kind.var.varKind) {
-        case CONSTK:
-            /* Atribui o operando atual */
-            operandoAtual = createOperand();
-            operandoAtual->kind = IntConst;
-            operandoAtual->contents.val = tree->kind.var.attr.val;
-            break; /* CONSTK */
-
-        case IDK:
-            /* Atribui o operando atual */
-            operandoAtual = createOperand();
-            operandoAtual->kind = String;
-            operandoAtual->contents.variable.name = tree->kind.var.attr.name;
-            operandoAtual->contents.variable.scope = tree->kind.var.scope;
-            break; /* IDK */
-
-        case VECTORK:
-            p1 = tree->child[0];
-            /* Atualiza o operando atual como o id do vetor e seta como op1 */
-            operandoAtual = createOperand();
-            operandoAtual->kind = String;
-            operandoAtual->contents.variable.name = tree->kind.var.attr.name;
-            operandoAtual->contents.variable.scope = tree->kind.var.scope;
-            op1 = operandoAtual;
-            /* Gera código para a posição do vetor */
-            cGen(p1);
-            /* Indice do vetor */
-            op2 = operandoAtual;
-            /* Atribui a instrução atual */
-            instrucaoAtual = VEC;
-            /* Temporário */
-            op3 = createTemporaryOperand();
-            /* Atualiza o operando atual */
-            operandoAtual = op3;
-            /* Cria e insere uma nova representação em código intermediário, mas
-             * somente se estiver acessando o vetor
-             */
-            if(tree->kind.var.acesso == ACCESSK) {
-                // Guarda a última instrução para manipular em caso de acesso ao endereço do vetor
-                ultimaQuadrupla = createQuad(instrucaoAtual, op1, op2, op3);
-                insertQuad(ultimaQuadrupla);
-            }
-            break; /* VectorK */
-
-        case FUNCTIONK:
-            verificaFimInstrucaoAnterior();
-            op1 = createOperand();
-            op1->kind = String;
-            op1->contents.variable.name = tree->kind.var.attr.name;
-            op1->contents.variable.scope = tree->kind.var.scope;
-            insertQuad(createQuad(FUNC, op1, NULL, NULL));
-
-            /* list of parameters */
-            p1 = tree->child[0];
-            while(p1 != NULL) {
-                op2 = createOperand();
-                op2->kind = String;
-                op2->contents.variable.name = p1->child[0]->kind.var.attr.name;
-                op2->contents.variable.scope = p1->child[0]->kind.var.scope;
-                insertQuad(createQuad(GET_PARAM, op2, NULL, NULL));
-                p1 = p1->sibling;
-            }
-
-            /* build code for function block */
-            p2 = tree->child[1];
-            cGen(p2);
-            break;
-
-        case CALLK:
-            /* Argumentos */
-            p1 = tree->child[0];
-            /* Atribui o primeiro operando */
-            op1 = createOperand();
-            op1->kind = String;
-            op1->contents.variable.name = tree->kind.var.attr.name;
-            op1->contents.variable.scope = tree->kind.var.scope;
-            /* Atribui o segundo operando */
-            qtdParams = getQuantidadeParametros(tree);
-            pushParam(&qtdParams);
-            op2 = createOperand();
-            if(qtdParams > 0) {
-                op2->kind = IntConst;
-                op2->contents.val = qtdParams;
-            } else {
-                op2->kind = IntConst;
-                op2->contents.val = 0;
-            }
-            /* build code for function call */
-            instrucaoAtual = PARAM_LIST;
-            op3 = createOperand();
-            op3->kind = IntConst;
-            op3->contents.val = getQuantidadeParametros(tree);
-            insertQuad(createQuad(instrucaoAtual, op3, NULL, NULL));
-            while(p1 != NULL) {
-                cGen(p1);
-                /* Atribui o tipo de instrução */
-                instrucaoAtual = SET_PARAM;
-                /* Cria e insere uma nova representação em código intermediário */
-                insertQuad(createQuad(instrucaoAtual, operandoAtual, NULL, NULL));
-                /* Decrementa qtdParams */
-                --qtdParams;
-                /* Se for um chamado de OUTPUT, verifica o display de exibição */
-                if(!strcmp(tree->kind.var.attr.name, "output") && p1->sibling == NULL) {
-                    display = p1->kind.var.attr.val;
-                }
-                p1 = p1->sibling;
-            }
-            popParam();
-            /* Atribui o tipo de instrução */
-            instrucaoAtual = CALL;
-            /* Armazena possível offset para manipulação da memória reservada de índice de programas */
-            if (op1->kind == IntConst) {
-                offset = operandoAtual->contents.val;
-            }
-            /* Atualiza o operando atual */
-            operandoAtual = createTemporaryOperand();
-            /* Cria e insere uma nova representação em código intermediário */
-            q = createQuad(instrucaoAtual, op1, op2, operandoAtual);
-            if(display != -1) {
-                q->display = display;
-            }
-            insertQuad(q);
-            break;
-    }
-}
-
-/* Procedimento cGen gera o código recursivamente
- * pela árvore sintática
+/* Procedure cGen recursively generates code by
+ * tree traversal
  */
-static void cGen(TreeNode * tree) {
-    if (tree != NULL) {
-        switch (tree->node) {
-            case STMTK:
-                genStmt(tree);
-                break;
-            case EXPK:
-                genExp(tree);
-                break;
-            case VARK:
-                genVar(tree);
-                break;
-            default:
-                break;
-        }
-        /* Se a quantidade de parâmetros for maior que 0, cGen() será chamado automaticamente */
-        if(paramHead == NULL) {
-            cGen(tree->sibling);
-        } else {
-            if(paramHead->count == 0) {
-                cGen(tree->sibling);
-            }
-        }
+static void cGen( TreeNode * tree)
+{ if (tree != NULL)
+  { switch (tree->nodekind) {
+      case StmtK:
+        genStmt(tree);
+        break;
+      case ExpK:
+        genExp(tree);
+        break;
+      default:
+        break;
     }
+    if (nparams == -1) {
+      cGen(tree->sibling);
+    }
+    else {
+      if(nparams == 0) {
+        cGen(tree->sibling);
+      }
+    }
+  }
 }
 
-void verificaFimInstrucaoAnterior(void) {
-    if(head != NULL) {
-        Quadruple temp = head;
-        while(temp->next != NULL) {
-            temp = temp->next;
-        }
-        /* Insere um return forçadamente caso não haja no código de alto nível */
-        if(temp->instruction != RTN) {
-            insertQuad(createQuad(RTN, NULL, NULL, NULL));
-        }
+void printCode() {
+  QuadList q = head;
+  Address a1, a2, a3;
+  while (q != NULL) {
+    a1 = q->quad.addr1;
+    a2 = q->quad.addr2;
+    a3 = q->quad.addr3;
+    printf("(%s, ", OpKindNames[q->quad.op]);
+    switch (a1.kind) {
+      case Empty:
+        printf("-");
+        break;
+      case IntConst:
+        printf("%d", a1.contents.val);
+        break;
+      case String:
+        //printf("%s.%s", a1.contents.var.scope, a1.contents.var.name);
+        printf("%s", a1.contents.var.name);
+        break;
+      default:
+      break;
     }
+    printf(", ");
+    switch (a2.kind) {
+      case Empty:
+        printf("-");
+        break;
+      case IntConst:
+        printf("%d", a2.contents.val);
+        break;
+      case String:
+        //printf("%s.%s", a2.contents.var.scope, a2.contents.var.name);
+        printf("%s", a2.contents.var.name);
+        break;
+      default:
+        break;
+    }
+    printf(", ");
+    switch (a3.kind) {
+      case Empty:
+        printf("-");
+        break;
+      case IntConst:
+        printf("%d", a3.contents.val);
+        break;
+      case String:
+        //printf("%s.%s", a3.contents.var.scope, a3.contents.var.name);
+        printf("%s", a3.contents.var.name);
+        break;
+      default:
+        break;
+    }
+    printf(")\n");
+    q = q->next;
+  }
 }
 
 /**********************************************/
@@ -584,158 +502,20 @@ void verificaFimInstrucaoAnterior(void) {
  * of the code file, and is used to print the
  * file name as a comment in the code file
  */
-void codeGen(TreeNode * syntaxTree, char * codefile, CodeInfo codeInfo) {
-    char * s = (char *) malloc(strlen(codefile) + 7);
-    strcpy(s,"Arquivo: ");
-    strcat(s,codefile);
-    emitComment("Compilação C- para código intermediário", 0);
-    emitComment(s, 0);
-    cGen(syntaxTree);
-    /* finish */
-    emitComment("Fim da execução.", 0);
-
-    if (codeInfo.codeType != PROGRAMA) {
-        // Se for código do Kernel ou Bios, adiciona o HALT no fim do código
-        insertQuad(createQuad(HALT, NULL, NULL, NULL));
-    } else {
-        // Se for código de um Programa comum, adiciona o SYSCALL no fim do código
-        insertQuad(createQuad(SYSCALL, NULL, NULL, NULL));
-    }    
-
-    emitCode("\n********** Código intermediário **********\n");
-    printIntermediateCode();
+void codeGen(TreeNode * syntaxTree, char * codefile)
+{  char * s = malloc(strlen(codefile)+7);
+   strcpy(s,"File: ");
+   strcat(s,codefile);
+   emitComment("\nC- Intermediate Code");
+   emitComment(s);
+   empty = addr_createEmpty();
+   cGen(syntaxTree);
+   quad_insert(opHLT, empty, empty, empty);
+   printCode();
+   /* finish */
+   emitComment("End of execution");
 }
 
-void printIntermediateCode() {
-    Quadruple q = head;
-    char quad[100];
-
-    while(q != NULL) {
-        sprintf(quad, "%d: (", q->linha);
-        strcat(quad, toStringInstruction(q->instruction));
-
-        if(q->op1 == NULL) {
-            strcat(quad, ", _");
-        } else if(q->op1->kind == String) {
-            strcat(quad, ", ");
-            strcat(quad, q->op1->contents.variable.name);
-        } else {
-            sprintf(tempString, ", %d", q->op1->contents.val);
-            strcat(quad,tempString);
-        }
-
-        if(q->op2 == NULL) {
-            strcat(quad, ", _");
-        } else if(q->op2->kind == String) {
-            strcat(quad, ", ");
-            strcat(quad, q->op2->contents.variable.name);
-        } else {
-            sprintf(tempString, ", %d", q->op2->contents.val);
-            strcat(quad,tempString);
-        }
-
-        if(q->op3 == NULL) {
-            strcat(quad, ", _)");
-        } else if(q->op3->kind == String) {
-            strcat(quad, ", ");
-            strcat(quad, q->op3->contents.variable.name);
-            strcat(quad, ")");
-        } else {
-            sprintf(tempString, ", %d", q->op3->contents.val);
-            strcat(quad,tempString);
-            strcat(quad, ")");
-        }
-        emitCode(quad);
-        q = q->next;
-    }
-}
-
-void pushLocation(LocationStack ls) {
-    if(locationHead == NULL) {
-        locationHead = ls;
-        locationHead->next = NULL;
-    } else {
-        ls->next = locationHead;
-        locationHead = ls;
-    }
-}
-
-void popLocation() {
-    if(locationHead != NULL) {
-        LocationStack ls = locationHead;
-        locationHead = locationHead->next;
-        free(ls);
-        ls = NULL;
-    }
-}
-
-LocationStack createLocation(Quadruple * quad) {
-    LocationStack ls = (LocationStack) malloc(sizeof(struct Location));
-    ls->quad = quad;
-    ls->next = NULL;
-    return ls;
-}
-
-void updateLocation(Operand op) {
-    Quadruple q = *locationHead->quad;
-    if(q->instruction != JPF) {
-        q->op1 = op;
-    } else {
-        q->op2 = op;
-    }
-    *locationHead->quad = q;
-}
-
-void pushParam(int * count) {
-    ParamStack ps = (ParamStack) malloc(sizeof(struct Param));
-    ps->count = count;
-    ps->next = NULL;
-    if(paramHead == NULL) {
-        paramHead = ps;
-    } else {
-        ps->next = paramHead;
-        paramHead = ps;
-    }
-}
-
-void popParam(void) {
-    if(paramHead != NULL) {
-        ParamStack ps = paramHead;
-        paramHead = paramHead->next;
-        free(ps);
-        ps = NULL;
-    }
-}
-
-Quadruple createQuad(InstructionKind instruction, Operand op1, Operand op2, Operand op3) {
-    Quadruple q = (Quadruple) malloc(sizeof(struct Quad));
-    q->instruction = instruction;
-    q->op1 = op1;
-    q->op2 = op2;
-    q->op3 = op3;
-    q->linha = ++linha;
-    q->next = NULL;
-    return q;
-}
-
-Quadruple * insertQuad(Quadruple q) {
-    Quadruple * ptr = (Quadruple *) malloc(sizeof(struct Quad));
-    if(head == NULL) {
-        head = q;
-        head->next = NULL;
-        ptr = &head;
-    } else {
-        Quadruple temp = head;
-        while(temp->next != NULL) {
-            temp = temp->next;
-        }
-        temp->next = q;
-        temp->next->next = NULL;
-        ptr = &temp->next;
-    }
-    return ptr;
-}
-
-Quadruple getCodigoIntermediario(void) {
-    return head;
+QuadList getIntermediate() {
+    return head; 
 }

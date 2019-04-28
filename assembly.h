@@ -3,7 +3,7 @@
 #define nregparam 10
 
 typedef enum {  nop, halt, add, addi, sub, mult, divi, mod, and,
-                or, not, xor, slt, sgt, sle, sge, shl, shr, move,
+                or, not, xor, slt, shl, shr, move,
                 ldi, beq, bne, jmp, in, out, str, load, jr } InstrKind;
 typedef enum {  format1, format2, format3, format4 } InstrFormat;
 typedef enum {  instr, lbl } LineKind;
@@ -21,3 +21,34 @@ typedef struct {
     char * imediatelabel;
 } Instruction;
 
+typedef struct AssemblyCodeRec {
+    int lineno;
+    LineKind kind;
+    union {
+        Instruction instruction;
+        char * label;
+    } line;
+    struct AssemblyCodeRec * next;
+} * AssemblyCode;
+
+typedef struct VarListRec {
+    char * id;
+    int size;
+    int memloc;
+    VarKind kind;
+    struct VarListRec * next;
+} * VarList;
+
+typedef struct FunListRec {
+    char * id;
+    int size;
+    int memloc;
+    VarList vars;
+    struct FunListRec * next;
+} * FunList;
+
+void generateAssembly (QuadList head);
+
+AssemblyCode getAssembly ();
+
+int getSize();

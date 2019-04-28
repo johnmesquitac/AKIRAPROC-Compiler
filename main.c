@@ -90,7 +90,15 @@ int main( int argc, char * argv[] )
     { printf("Unable to open %s\n",codefile);
       exit(1);
     }
+    fprintf(listing,"\nCreating Intermediate Code...\n");
     codeGen(syntaxTree,codefile);
+    fprintf(listing,"\nIndermediate Code Created\n");
+    fprintf(listing,"\nGenerating Assembly Code...\n");
+    generateAssembly(getIntermediate());
+    fprintf(listing,"\nAssembly Code Generated...\n");
+    fprintf(listing,"\nGenerating Binary Code...\n");
+    generateBinary(getAssembly(), getSize());
+    fprintf(listing,"\nBinary Code Generated...\n");
     fclose(code);
   }
 #endif
