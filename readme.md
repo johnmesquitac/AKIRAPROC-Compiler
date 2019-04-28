@@ -2,4 +2,4 @@ To run:
 
 $ make
 
-$ ./tiny selectionSort.txt
+$ ./tiny YourCodeHere.txt
