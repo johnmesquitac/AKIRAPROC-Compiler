@@ -85,6 +85,13 @@ typedef struct treeNode
      union { TokenType op;
              int val;
              char * name; } attr;
+     char * idname;
+     char *  scope;
+     char * idtype;
+     char * datatype;
+     int vet;
+     int declared;
+     int params;
      dataTypes type; /* for type checking of exps */
    } TreeNode;
 

@@ -2,7 +2,11 @@
 #define nregtemp 16
 #define nregparam 10
 
-typedef enum {  nop, halt, add, addi, sub, mult, divi, mod, and,
+#define sploc 0  // tam 32 
+#define gploc 32 // tam 16
+#define raloc 47 // tam 16
+
+typedef enum {  nop, halt, add, addi, sub, mult, divi, mod, and, sle,sge,sgt,
                 or, not, xor, slt, shl, shr, move,
                 ldi, beq, bne, jmp, in, out, str, load, jr } InstrKind;
 typedef enum {  format1, format2, format3, format4 } InstrFormat;
@@ -17,8 +21,8 @@ typedef struct {
     Reg reg1;
     Reg reg2;
     Reg reg3;
-    int imediate;
-    char * imediatelabel;
+    int im;
+    char * imlbl;
 } Instruction;
 
 typedef struct AssemblyCodeRec {

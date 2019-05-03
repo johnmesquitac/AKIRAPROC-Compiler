@@ -169,10 +169,10 @@ static void printSpaces(void)
            fprintf(listing,"Chamada da Função: %s\n",tree->attr.name);
            break;
          case TypeK:
-           if(tree->size == 0)
+         //  if(tree->size == 0)
              fprintf(listing,"Tipo: %s\n",tree->attr.name);
-           else
-             fprintf(listing,"Tipo: %s[%d]\n",tree->attr.name,tree->size);
+           //else
+             //fprintf(listing,"Tipo: %s[%d]\n",tree->attr.name,tree->size);
            break;
           case ParamK:
            fprintf(listing,"Id: %s\n",tree->attr.name);

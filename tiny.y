@@ -17,6 +17,7 @@
 static TreeNode * savedTree; /* stores syntax tree for later return */
 static int yylex(void);
 int yyerror(char *msg);
+int params = 0;
 
 
 %}
@@ -69,9 +70,9 @@ var-dec : INT identificador
             {
               $$ = newExpNode(TypeK);
               $$->attr.name = "INT";
-              $$->size = $4->attr.val;
               $$->child[0] = $2;
               $2->kind.exp = VarDeclK;
+              $2->size = $4->attr.val;
               $2->type = INTTYPE;
             } | error {yyerrok;}
 	      ;
@@ -245,10 +246,9 @@ retorno-dec : RETURN SEMICOL { $$ = newStmtNode(ReturnK); }
 exp : var EQUAL exp
       {
         $$ = newStmtNode(AssignK);
+        $$->attr.name= $1->attr.name;
         $$->child[0] = $1;
-        // $$->child[0]->kind.exp = AssignElK;
         $$->child[1] = $3;
-        // $$->child[1]->kind.exp = AssignElK;
       }
     | simples-exp { $$ = $1; }
     ;
@@ -256,7 +256,8 @@ exp : var EQUAL exp
 var : identificador { $$ = $1; }
     | identificador LCOL exp RCOL
       {
-        $$ = newExpNode(VetorK);
+        $$=$1;
+       // $$ = newExpNode(VetorK);
         $$->attr.name = $1->attr.name;
         $$->child[0] = $3;
       }
@@ -346,7 +347,8 @@ mult : MULT
 
 fator : LPAREN exp RPAREN { $$ = $2; }
       | var { $$ = $1; }
-      | ativ { $$ = $1; }
+      | ativ { $$ = $1;
+        params = 0; }
       | numero { $$ = $1; }
       ;
 
@@ -355,12 +357,14 @@ ativ : identificador LPAREN arg-list RPAREN
           $$ = newExpNode(AtivK);
           $$->attr.name = $1->attr.name;
           $$->child[0] = $3;
+          $$->params = params;
 
         }
         | identificador LPAREN RPAREN
          {
            $$ = newExpNode(AtivK);
            $$->attr.name = $1->attr.name;
+           $$->params = params;
          }
      ;
 
@@ -372,11 +376,14 @@ arg-list : arg-list COMMA exp
                 while (t->sibling != NULL)
                 t = t->sibling;
                 t->sibling = $3;
+                params ++;
                 $$ = $1;
               }
               else $$ = $3;
             }
-         | exp { $$ = $1; }
+         | exp { 
+           params ++;
+           $$ = $1; }
          ;
 identificador : ID
                 {

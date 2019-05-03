@@ -16,7 +16,7 @@
 /* set NO_CODE to TRUE to get a compiler that does not
  * generate code
  */
-#define NO_CODE TRUE
+#define NO_CODE FALSE
 
 #include "util.h"
 #if NO_PARSE
@@ -27,6 +27,7 @@
 #include "analyze.h"
 #if !NO_CODE
 #include "cgen.h"
+#include "assembly.h"
 #endif
 #endif
 #endif
@@ -72,19 +73,21 @@ int main( int argc, char * argv[] )
     printTree(syntaxTree);
   }
 #if !NO_ANALYZE
-   if (TraceAnalyze) fprintf(listing,"\nBuilding Symbol Table...\n");
-
+ //if(!ERROR){
+  if (TraceAnalyze) fprintf(listing,"\nBuilding Symbol Table...\n");
     buildSymtab(syntaxTree);
-    // if (TraceAnalyze) fprintf(listing,"\nChecking Types...\n");
-    // typeCheck(syntaxTree);
-    //if (TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
+  // if (TraceAnalyze) fprintf(listing,"\nChecking Types...\n");
+    //typeCheck(syntaxTree);
+   //if (TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
+   //}
+
 #if !NO_CODE
-  if (! Error)
-  { char * codefile;
+   if (!Error){
+   char * codefile;
     int fnlen = strcspn(pgm,".");
     codefile = (char *) calloc(fnlen+4, sizeof(char));
     strncpy(codefile,pgm,fnlen);
-    strcat(codefile,".tm");
+    strcat(codefile,"_binary.txt");
     code = fopen(codefile,"w");
     if (code == NULL)
     { printf("Unable to open %s\n",codefile);
@@ -93,14 +96,14 @@ int main( int argc, char * argv[] )
     fprintf(listing,"\nCreating Intermediate Code...\n");
     codeGen(syntaxTree,codefile);
     fprintf(listing,"\nIndermediate Code Created\n");
-    fprintf(listing,"\nGenerating Assembly Code...\n");
-    generateAssembly(getIntermediate());
-    fprintf(listing,"\nAssembly Code Generated...\n");
-    fprintf(listing,"\nGenerating Binary Code...\n");
-    generateBinary(getAssembly(), getSize());
-    fprintf(listing,"\nBinary Code Generated...\n");
+   // fprintf(listing,"\nGenerating Assembly Code...\n");
+   // generateAssembly(getIntermediate());
+   // fprintf(listing,"\nAssembly Code Generated...\n");
+   // fprintf(listing,"\nGenerating Binary Code...\n");
+    //generateBinary(getAssembly(), getSize());
+    //fprintf(listing,"\nBinary Code Generated...\n");
     fclose(code);
-  }
+   } 
 #endif
 #endif
 #endif

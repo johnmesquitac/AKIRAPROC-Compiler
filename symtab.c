@@ -51,6 +51,7 @@ typedef struct BucketListRec
      char* escopo;
      LineList lines;
      int memloc ; /* memory location for variable */
+     int vet;
      struct BucketListRec * next;
    } * BucketList;
 
@@ -62,7 +63,7 @@ static BucketList hashTable[SIZE];
  * loc = memory location is inserted only the
  * first time, otherwise ignored
  */
-void st_insert( char * name, int lineno, int op, char* escopo, dataTypes DType, IDTypes IType )
+void st_insert( char * name, int lineno, int op, char* escopo, dataTypes DType, IDTypes IType, int vet )
 {
   //printf("st_insert\n");
   int h = hash(name);
@@ -81,6 +82,7 @@ void st_insert( char * name, int lineno, int op, char* escopo, dataTypes DType, 
     l->name = name;
     l->lines = (LineList) malloc(sizeof(struct LineListRec));
     l->lines->lineno = lineno;
+    l->vet = vet;
     l->memloc = op;
     l->IType = IType;
     l->Dtype = DType;

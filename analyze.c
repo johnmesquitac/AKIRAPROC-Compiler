@@ -70,7 +70,7 @@ static void insertNode( TreeNode * t)
           }
           else
           /* encontrada na tabela, verificar escopo e adicionar linha */
-            st_insert(t->child[0]->attr.name,t->lineno,0,escopo,INTTYPE,VAR);
+            st_insert(t->child[0]->attr.name,t->lineno,0,escopo,INTTYPE,VAR,t->vet);
           t->child[0]->add = 1;
       }
       break;
@@ -84,14 +84,14 @@ static void insertNode( TreeNode * t)
               case VarDeclK:
                 if (st_lookup(t->attr.name) == -1)
                 /* não encontrado na tabela, inserir*/
-                  st_insert(t->child[0]->attr.name,t->lineno,location++, escopo,INTTYPE, VAR);
+                  st_insert(t->child[0]->attr.name,t->lineno,location++, escopo,INTTYPE, VAR , t->vet);
                 else
                 /* encontrado na tabela, verificar escopo */
-                  st_insert(t->child[0]->attr.name,t->lineno,0, escopo,INTTYPE, VAR);
+                  st_insert(t->child[0]->attr.name,t->lineno,0, escopo,INTTYPE, VAR, t->vet);
                 break;
               case FunDeclK:
                 if (st_lookup(t->attr.name) == -1){
-                  st_insert(t->child[0]->attr.name,t->lineno,location++, "global",t->child[0]->type,FUN);}
+                  st_insert(t->child[0]->attr.name,t->lineno,location++, "global",t->child[0]->type,FUN, t->vet);}
                 else
                 /* encontrado na tabela, verificar escopo */
                   fprintf(listing,"Erro: Multiplas declarações da função %s. [%d]\n", t->child[0]->attr.name, t->lineno);
@@ -102,10 +102,10 @@ static void insertNode( TreeNode * t)
           }
           break;
         case ParamK:
-          st_insert(t->attr.name,t->lineno,location++,escopo,INTTYPE, VAR);
+          st_insert(t->attr.name,t->lineno,location++,escopo,INTTYPE, VAR, t->vet);
           break;
         case VetorK:
-        st_insert(t->attr.name,t->lineno,0,escopo,INTTYPE, VAR);
+        st_insert(t->attr.name,t->lineno,0,escopo,INTTYPE, VAR, t->vet);
         break;
         case IdK:
           if(t->add != 1){
@@ -114,18 +114,18 @@ static void insertNode( TreeNode * t)
               Error = TRUE;
             }
             else {
-              st_insert(t->attr.name,t->lineno,0,escopo,INTTYPE,FUN);
+              st_insert(t->attr.name,t->lineno,0,escopo,INTTYPE,FUN, t->vet);
             }
           }
           break;
         case AtivK:
           if (st_lookup(t->attr.name) == -1){
             fprintf(listing,"Erro: A função %s não foi declarada. [%d]\n", t->attr.name, t->lineno);
-            st_insert(t->attr.name,t->lineno,0,escopo,NULLL,CALL);
+            st_insert(t->attr.name,t->lineno,0,escopo,NULLL,CALL, t->vet);
             Error = TRUE;
           }
           else {
-            st_insert(t->attr.name,t->lineno,0,escopo,NULLL,CALL);
+            st_insert(t->attr.name,t->lineno,0,escopo,NULLL,CALL, t->vet);
           }
           break;
         default:
