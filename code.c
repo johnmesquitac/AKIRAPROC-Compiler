@@ -1,5 +1,4 @@
 /****************************************************/
-/* Lab de Compiladores - Prof. Galvão               */
 /* File: code.c                                     */
 /* C- Code emitting utilities                       */
 /* implementation for the C- compiler               */

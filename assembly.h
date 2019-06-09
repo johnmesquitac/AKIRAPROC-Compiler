@@ -1,3 +1,10 @@
+/****************************************************/
+/* File:assembly.h                                  */
+/* Adapted from:                                    */
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
+/****************************************************/
+
 #define nregisters 32
 #define nregtemp 16
 #define nregparam 10
@@ -6,8 +13,8 @@
 #define gploc 32 // tam 16
 #define raloc 47 // tam 16
 
-typedef enum {  nop, halt, add, addi, sub, mult, divi, mod, and, sle,sge,sgt,
-                or, not, xor, slt, shl, shr, move,
+typedef enum {  nop, halt, add, addi, sub, mult, divi, mod, and, or, not, xor, slt, sgt,
+                sle, sge, shl, shr, move,
                 ldi, beq, bne, jmp, in, out, str, load, jr } InstrKind;
 typedef enum {  format1, format2, format3, format4 } InstrFormat;
 typedef enum {  instr, lbl } LineKind;

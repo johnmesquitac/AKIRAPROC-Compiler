@@ -28,6 +28,7 @@
 #if !NO_CODE
 #include "cgen.h"
 #include "assembly.h"
+#include "binary.h"
 #endif
 #endif
 #endif
@@ -72,14 +73,12 @@ int main( int argc, char * argv[] )
     fprintf(listing,"\nSyntax tree:\n");
     printTree(syntaxTree);
   }
-#if !NO_ANALYZE
- //if(!ERROR){
+#if !NO_ANALYZE7
   if (TraceAnalyze) fprintf(listing,"\nBuilding Symbol Table...\n");
     buildSymtab(syntaxTree);
   // if (TraceAnalyze) fprintf(listing,"\nChecking Types...\n");
     //typeCheck(syntaxTree);
    //if (TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
-   //}
 
 #if !NO_CODE
    if (!Error){
@@ -96,12 +95,12 @@ int main( int argc, char * argv[] )
     fprintf(listing,"\nCreating Intermediate Code...\n");
     codeGen(syntaxTree,codefile);
     fprintf(listing,"\nIndermediate Code Created\n");
-   // fprintf(listing,"\nGenerating Assembly Code...\n");
-   // generateAssembly(getIntermediate());
-   // fprintf(listing,"\nAssembly Code Generated...\n");
-   // fprintf(listing,"\nGenerating Binary Code...\n");
-    //generateBinary(getAssembly(), getSize());
-    //fprintf(listing,"\nBinary Code Generated...\n");
+    fprintf(listing,"\nGenerating Assembly Code...\n");
+    generateAssembly(getIntermediate());
+    fprintf(listing,"\nAssembly Code Generated...\n");
+    fprintf(listing,"\nGenerating Binary Code...\n");
+    generateBinary(getAssembly(), getSize());
+    fprintf(listing,"\nBinary Code Generated...\n");
     fclose(code);
    } 
 #endif

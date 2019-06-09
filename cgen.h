@@ -1,5 +1,4 @@
 /****************************************************/
-/* Lab de Compiladores - Prof. Galvão               */
 /* File: cgen.h                                     */
 /* The code generator interface                     */
 /* for the C- compiler                              */

@@ -119,7 +119,7 @@ static void insertNode( TreeNode * t)
           }
           break;
         case AtivK:
-          if (st_lookup(t->attr.name) == -1){
+          if (st_lookup(t->attr.name) == -1 && strcmp(t->attr.name, "input")!=0 && strcmp(t->attr.name, "output")!=0){
             fprintf(listing,"Erro: A função %s não foi declarada. [%d]\n", t->attr.name, t->lineno);
             st_insert(t->attr.name,t->lineno,0,escopo,NULLL,CALL, t->vet);
             Error = TRUE;
@@ -182,14 +182,12 @@ void checkNode(TreeNode * t)
           if (t->child[1]->kind.exp == AtivK && getFunType(t->child[1]->attr.name) == VOIDTYPE)
             typeError(t->child[0],"Função com retorno void não pode ser atribuido a uma variavel");
           break;
-
         default:
           break;
       }
       break;
     default:
       break;
-
   }
 }
 
