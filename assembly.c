@@ -32,7 +32,6 @@ const char * regNames[] = { "$zero", "$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "
 
 
 void insertFun (char * id) {
-   // printf("entrou no insertFun, %s \n", id);
     FunList new = (FunList) malloc(sizeof(struct FunListRec));
     new->id = (char *) malloc(strlen(id) * sizeof(char));
     strcpy(new->id, id);
@@ -51,31 +50,22 @@ void insertFun (char * id) {
 }
 
 void insertVar (char * scope, char * id, int size, VarKind kind) {
-        printf("entrou no insert var \n");
+   //  printf("entrou no insert var: scope:%s \n",scope);
     FunList f = funlisthead;
- //   printf("%d \n",f->size);
-   // printf("f->id:%s, scope:%s \n",f->id, f->next->id);
-   if(kind == 1 )
+    if(scope == NULL){
+    if(kind == 1 )
     scope= f->id;
-   else
+    else
     scope= f->next->id;
+    }
     while (f != NULL && strcmp(f->id, scope) != 0)  f = f->next;
-      /*{
-        printf("while, f dif null \n");
-        printf("f->id: %s \n", f->id);
-        printf("f->next:%s \n",f->next->id);*
-      
-    }*/
-    //    printf("nao é null \n ");
       if (f == NULL) {
       //  printf("f igual a null \n");
         insertFun(scope);
         f = funlisthead;
-        while (f != NULL && strcmp(f->id, "null") != 0 ) 
+        while (f != NULL && strcmp(f->id, scope) != 0 ) 
         f = f->next;
     }
-
-   // printf("passou do null? \n");
     VarList new = (VarList) malloc(sizeof(struct VarListRec));
     new->id = (char *) malloc(strlen(id) * sizeof(char));
     strcpy(new->id, id);
@@ -85,8 +75,6 @@ void insertVar (char * scope, char * id, int size, VarKind kind) {
     new->kind = kind;
     new->next = NULL;
     if (f->vars == NULL) {
-       // printf("entrou no null \n");
-       // printf("new size %d: \n", new->size);
         f->vars = new;
     }
     else {
@@ -203,22 +191,19 @@ VarKind checkType (QuadList l) {
 }
 
 int getVarMemLoc (char * id, char * scope) {
-   // printf("entrou no getvarmemloc \n");
+   // if(strcmp(scope,"main")== 0)
+  //   printf("id:%s, scope:%s \n",id, scope);
     FunList f = funlisthead;
-   // printf("scope:%s \n", scope);
-    while (f != NULL && strcmp(f->id, scope) != 0)
-    { f = f->next;
-   //  printf("f!=null\n");
-    }
-    if (f == NULL) {
-           //  printf("é -1 \n");
-   return -1;
-    }
+    while (f != NULL && strcmp(f->id, scope) != 0)f = f->next;
+    if (f == NULL) 
+        return -1;
     VarList v = f->vars;
+   // printf("vars size:%d\n",v->memloc);
     while (v != NULL) {
-        if (strcmp(v->id, id) == 0) return v->memloc;
-        v = v->next;
-    }
+        //  printf("v não é nulo \n");
+        if (strcmp(v->id, id) == 0) return v->memloc; 
+        v = v->next; 
+    }       
     return -1;
 }
 
@@ -323,23 +308,27 @@ void generateInstruction (QuadList l) {
                 break;
             
             case opALLOC:
-                printf("entrou no alloc, a2:%d \n",a2.contents.val);
-                if (a2.contents.val == 1) insertVar(a3.contents.var.name, a1.contents.var.name,  a2.contents.val, simple);
+             //   printf("entrou no alloc, a2:%d \n",a2.contents.val);
+                if (a2.contents.val == 1){
+             //    printf("entrou no alloc:%s \n",a3.contents.var.name);
+                 insertVar(a3.contents.var.name, a1.contents.var.name,  a2.contents.val, simple);
+                }
                 else insertVar(a3.contents.var.name, a1.contents.var.name,  a2.contents.val, vector);
-                printf("saiu do alloc \n");
+              //  printf("saiu do alloc \n");
                 break;
             
             case opIMMED:
                // printf("entrou no imed \n");
                 instructionFormat3(ldi, getReg(a1.contents.var.name), a2.contents.val, NULL);
+
                 break;
     
             case opLOAD:
-                aux = getVarMemLoc(a2.contents.var.name, g->next->id);
-               // printf("aux: %d \n",aux);
-               // printf("saiu do getvarmem \n");
+           
+              //printf("a2.contents.var.scope: %s \n", a2.contents.var.scope);
+                aux = getVarMemLoc(a2.contents.var.name, a2.contents.var.scope);
+             // printf("%d \n", aux);
                 if (aux == -1) {
-                    //printf("aux -1 \n");
                     v = getVarKind(a2.contents.var.name, "Global");
                     aux = getVarMemLoc(a2.contents.var.name, "Global");
                     if (v == vector) {
@@ -351,8 +340,9 @@ void generateInstruction (QuadList l) {
                 }
                 else{
                    // printf("aux dif -1 \n");
-                    v = getVarKind(a2.contents.var.name, g->next->id);
+                    v = getVarKind(a2.contents.var.name, a2.contents.var.scope);
                     if (v == vector) {
+                        printf("é vector \n");
                         instructionFormat2(addi, getReg(a1.contents.var.name), $sp, aux, NULL);
                     }
                     else {
@@ -362,7 +352,7 @@ void generateInstruction (QuadList l) {
                 break;
     
             case opSTORE:
-                   aux = getVarMemLoc(a1.contents.var.name, g->next->id);
+                   aux = getVarMemLoc(a1.contents.var.name, a1.contents.var.scope);
                 if (aux == -1) {
                     aux = getVarMemLoc(a1.contents.var.name, "Global");
                     if (a2.kind == String) instructionFormat2(str, getReg(a3.contents.var.name), getReg(a2.contents.var.name), aux, NULL);
@@ -375,10 +365,9 @@ void generateInstruction (QuadList l) {
                 break;
             
             case opVEC:
-                printf("entrou no vec \n");
-                v = getVarKind(a2.contents.var.name, g->next->id);  //a2.contents.var.scope);
+                v = getVarKind(a2.contents.var.name, a2.contents.var.scope);  //a2.contents.var.scope);
                 if (v == simple) v = getVarKind(a2.contents.var.name, "Global");
-                aux = getVarMemLoc(a2.contents.var.name, g->next->id);// a2.contents.var.scope);
+                aux = getVarMemLoc(a2.contents.var.name, a2.contents.var.scope);// a2.contents.var.scope);
                 if (v == vector) {
                     if (aux == -1) {
                         aux = getVarMemLoc(a2.contents.var.name, "Global");
@@ -394,7 +383,7 @@ void generateInstruction (QuadList l) {
                     instructionFormat1(add, getReg(a3.contents.var.name), getReg(a3.contents.var.name), getReg(a1.contents.var.name));
                     instructionFormat2(load, getReg(a1.contents.var.name), getReg(a3.contents.var.name), 0, NULL);
                 }
-                printf("saiu do vec \n");
+             //   printf("saiu do vec \n");
                 break;
             
             case opGOTO:
@@ -455,8 +444,7 @@ void generateInstruction (QuadList l) {
                     instructionFormat4(nop, 0, NULL);
                 }
                 else {
-                    FunList c = funlisthead;
-                    aux = getFunSize(c->next->id);
+                    aux = getFunSize(a1.contents.var.scope);
                     instructionFormat2(addi, $sp, $sp, aux, NULL);
                     instructionFormat3(ldi, $jmp, line + 4, NULL);
                     instructionFormat2(str, $jmp, $ra, 0, NULL);

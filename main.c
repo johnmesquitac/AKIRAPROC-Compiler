@@ -72,13 +72,13 @@ int main( int argc, char * argv[] )
   if (TraceParse) {
     fprintf(listing,"\nSyntax tree:\n");
     printTree(syntaxTree);
-  }
+
 #if !NO_ANALYZE7
   if (TraceAnalyze) fprintf(listing,"\nBuilding Symbol Table...\n");
     buildSymtab(syntaxTree);
-  // if (TraceAnalyze) fprintf(listing,"\nChecking Types...\n");
-    //typeCheck(syntaxTree);
-   //if (TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
+   if (TraceAnalyze) fprintf(listing,"\nChecking Types...\n");
+    typeCheck(syntaxTree);
+   if (TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
 
 #if !NO_CODE
    if (!Error){
@@ -108,4 +108,5 @@ int main( int argc, char * argv[] )
 #endif
   fclose(source);
   return 0;
+}
 }

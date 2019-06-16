@@ -132,12 +132,12 @@ void st_insert( char * name, int lineno, int op, char* escopo, dataTypes DType, 
 /* Function st_lookup returns the memory
  * location of a variable or -1 if not found
  */
-int st_lookup ( char * name )
+int st_lookup ( char * name)
 {
   //printf("st_lookup\n");
   int h = hash(name);
   BucketList l =  hashTable[h];
-  while ((l != NULL) && !(strcmp(name,l->name) == 0))
+  while ((l != NULL) && !(strcmp(name,l->name) == 0))//|| !(strcmp(scope,l->escopo) == 0))
     l = l->next;
   if (l == NULL) return -1;
   else return l->memloc;
@@ -214,6 +214,7 @@ void printSymTab(FILE * listing)
         }
         fprintf(listing,"%-7s  ",id);
         fprintf(listing,"%-8s  ",data);
+        // fprintf(listing,"%-15d ",l->memloc);
         while (t != NULL)
         { fprintf(listing,"%3d; ",t->lineno);
           t = t->next;

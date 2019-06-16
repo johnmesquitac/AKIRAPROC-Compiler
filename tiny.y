@@ -4,7 +4,6 @@
 /* Compiler Construction: Principles and Practice   */
 /* Kenneth C. Louden                                */
 /****************************************************/
-
 %{
 #define YYPARSER /* distinguishes Yacc output from other code files */
 
@@ -17,6 +16,11 @@
 static TreeNode * savedTree; /* stores syntax tree for later return */
 static int yylex(void);
 int yyerror(char *msg);
+char *scope = "Global";
+char * idtype = "";
+char * datatype = "";
+static char *savedname;
+int flag = 0;
 int params = 0;
 
 
@@ -53,9 +57,28 @@ dec-list : dec-list dec
 	      ;
 
 dec 	    : var-dec { $$ = $1 ;}
-	    | fun-dec { $$ = $1; }
+	    | fun-dec { $$ = $1;
+      scope = "Global"; }
 	    ;
 
+identificador : ID
+                {
+                  $$ = newExpNode(IdK);
+                  $$->attr.name = copyString(tokenString);
+                  savedname = copyString(tokenString);
+                  $$->scope = scope;
+                  if(flag ==  1){
+                    scope= savedname;
+                    flag = 0;
+                  }
+                }
+              ;
+numero : NUM
+          {
+            $$ = newExpNode(ConstK);
+            $$->type = INTTYPE;
+            $$->attr.val = atoi(tokenString);
+          }
 var-dec : INT identificador
           SEMICOL
           {
@@ -63,6 +86,7 @@ var-dec : INT identificador
             $$->attr.name = "INT";
             $$->size = 0;
             $$->child[0] = $2;
+            $$->scope= scope;
             $2->kind.exp = VarDeclK;
             $2->type = INTTYPE;
           }
@@ -71,49 +95,38 @@ var-dec : INT identificador
               $$ = newExpNode(TypeK);
               $$->attr.name = "INT";
               $$->child[0] = $2;
+              $$->scope = scope;
               $2->kind.exp = VarDeclK;
               $2->size = $4->attr.val;
               $2->type = INTTYPE;
             } | error {yyerrok;}
 	      ;
 
-tipo-espec  : INT
-              {
-                $$ = newExpNode(TypeK);
-                $$->attr.name = "INT";
-                $$->type = INTTYPE;
-                $$->size = 1;
-              }
-            | VOID
-              {
-                $$ = newExpNode(TypeK);
-                $$->attr.name = "VOID";
-                $$->type = INTTYPE;
-                $$->size = 1;
-              }
-            ;
-
 fun-dec : INT identificador LPAREN params RPAREN composto-dec
             {
               $$ = newExpNode(TypeK);
               $$->attr.name = "INT";
               $$->child[0] = $2;
+              $$->scope = scope;
               $2->kind.exp = FunDeclK;
               $2->lineno = $$->lineno;
               $2->type = INTTYPE;
               $2->child[0] = $4;
               $2->child[1] = $6;
+              flag = 1;
             }
         | VOID identificador LPAREN params RPAREN composto-dec
                     {
                       $$ = newExpNode(TypeK);
                       $$->attr.name = "VOID";
                       $$->child[0] = $2;
+                      $$->scope = scope;
                       $2->type = VOIDTYPE;
                       $2->kind.exp = FunDeclK;
                       $2->lineno = $$->lineno;
                       $2->child[0] = $4;
                       $2->child[1] = $6;
+                      flag =1 ;
                     }
         ;
 
@@ -145,17 +158,38 @@ param : tipo-espec identificador
         {
           $$ = $1;
           $$->child[0] = $2;
+          $$->scope = scope;
           $2->kind.exp = ParamK;
           $$->size = 0;
+          flag =0;
         }
       | tipo-espec identificador LCOL RCOL
         {
           $$ = $1;
           $$->child[0] = $2;
+          $$->scope = scope;
           $2->kind.exp = ParamK; 
           $$->size = 0;
+          flag=0;
         }
       ;
+
+tipo-espec  : INT
+              {
+                $$ = newExpNode(TypeK);
+                $$->attr.name = "INT";
+                $$->type = INTTYPE;
+                $$->size = 1;
+              }
+            | VOID
+              {
+                $$ = newExpNode(TypeK);
+                $$->attr.name = "VOID";
+                $$->type = INTTYPE;
+                $$->size = 1;
+              }
+            ;
+
 
 composto-dec : COLE local-dec stmt-list COLD
               {
@@ -217,6 +251,7 @@ sel-dec : IF LPAREN exp RPAREN stmt
             $$ = newStmtNode(IfK);
             $$->child[0] = $3;
             $$->child[1] = $5;
+            $$->scope = $3->scope;
           }
         | IF LPAREN exp RPAREN stmt ELSE stmt
           {
@@ -224,6 +259,7 @@ sel-dec : IF LPAREN exp RPAREN stmt
             $$->child[0] = $3;
             $$->child[1] = $5;
             $$->child[2] = $7;
+            $$->scope= $3->scope;
           }
         ;
 
@@ -232,6 +268,7 @@ it-dec : WHILE LPAREN exp RPAREN stmt
           $$ = newStmtNode(WhileK);
           $$->child[0] = $3;
           $$->child[1] = $5;
+          $$->scope = $3->scope;
         }
         ;
 
@@ -247,6 +284,7 @@ exp : var EQUAL exp
       {
         $$ = newStmtNode(AssignK);
         $$->attr.name= $1->attr.name;
+        $$->scope = scope;
         $$->child[0] = $1;
         $$->child[1] = $3;
       }
@@ -268,6 +306,7 @@ simples-exp : soma-exp relacional soma-exp
                   $$ = $2;
                   $$->child[0] = $1;
                   $$->child[1] = $3;
+                  $$->scope = scope;
               }
             | soma-exp { $$ = $1; }
             ;
@@ -308,6 +347,7 @@ soma-exp : soma-exp soma termo {
             $$ = $2;
             $$->child[0] = $1;
             $$->child[1] = $3;
+            $$->scope = scope;
          }
          | termo { $$ = $1; }
          ;
@@ -327,6 +367,7 @@ soma : PLUS
 termo : termo mult fator
             {
               $$ = $2;
+              $$->scope = scope;
               $$->child[0] = $1;
               $$->child[1] = $3;
             }
@@ -356,6 +397,7 @@ ativ : identificador LPAREN arg-list RPAREN
         {
           $$ = newExpNode(AtivK);
           $$->attr.name = $1->attr.name;
+          $$->scope = scope;
           $$->child[0] = $3;
           $$->params = params;
 
@@ -364,6 +406,7 @@ ativ : identificador LPAREN arg-list RPAREN
          {
            $$ = newExpNode(AtivK);
            $$->attr.name = $1->attr.name;
+           $$->scope = scope;
            $$->params = params;
          }
      ;
@@ -385,18 +428,7 @@ arg-list : arg-list COMMA exp
            params ++;
            $$ = $1; }
          ;
-identificador : ID
-                {
-                  $$ = newExpNode(IdK);
-                  $$->attr.name = copyString(tokenString);
-                }
-              ;
-numero : NUM
-          {
-            $$ = newExpNode(ConstK);
-            $$->type = INTTYPE;
-            $$->attr.val = atoi(tokenString);
-          }
+
 
 %%
 

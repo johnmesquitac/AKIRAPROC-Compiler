@@ -57,7 +57,7 @@ static void nullProc(TreeNode * t)
  */
 static void insertNode( TreeNode * t)
 {
-  // printf("insertNode\n");
+   //printf("name: %s, escopo: %s \n",t->attr.name,t->scope);
   switch (t->nodekind){
     case StmtK:
       if(t->kind.stmt == AssignK)
