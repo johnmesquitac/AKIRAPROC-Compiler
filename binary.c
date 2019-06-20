@@ -14,14 +14,9 @@
 const char * opcodes[] =  { "nop", "halt", "add", "addi", "sub", "mult", "divi", "mod", "and", "or", "not", "xor", "slt", "sgt", "sle", "sge", 
                             "shl", "shr", "move", "ldi", "beq", "bne", "jmp", "in", "out", "str", "load", "jr" };
 
-/* const char * opcodeBins[] =  {  "000000", "111111", "000001", "000010", "000011", "000100", "000101", "000110", "000111", "001000", "001001", "001010", "001011",
-                                "001100", "001101", "001110", "001111", "010000", "010001", "010010", "010011", "010100", "010101", "010110", "010111", "011000",
-                                "011001", "011010" };*/
-
-
-const char * opcodeBins[] =  {  "010010", "010011", "000000", "000010", "000001", "000100", "000101", "001000", "001001", "000111", "001010", "000110", "001011",
-                                "001100", "001101", "010111", "011000", "010110", "001100", "001110", "001111", "010000", "010100", "010101", "001101", "001011",
-                                "010001", "011010" }; // versão joão*/
+const char * opcodeBins[] =  {  "010010", "010011", "000000", "000010", "000001", "000100", "000101", "011100","001000", "001001", "000111", "001010", "000110", "011011",
+                                "011001", "011010", "010111", "011000", "010110", "001100", "001110", "001111", "010000", "010100", "010101", "001101",
+                                "001011","010001" }; // versão joão*/
 
 const char * regBins[] = {  "00000", "00001", "00010", "00011", "00100", "00101", "00110", "00111", "01000", "01001", "01010", "01011", "01100", "01101", "01110",
                             "01111", "10000", "10001", "10010", "10011", "10100", "10101", "10110", "10111", "11000", "11001", "11010", "11011", "11100", "11101",
@@ -41,15 +36,22 @@ char * getImediate (int im, int size) {
 
 char * assembly2binary (Instruction i) {
     char * bin = (char *) malloc((32 + 4 + 2) * sizeof(char));
-    
+    //store
+    //load
     if (i.format == format1) {
         sprintf(bin, "%s_%s%s%s%s", opcodeBins[i.opcode], regBins[i.reg1], regBins[i.reg2], regBins[i.reg3], "00000000000");
     }
     else if (i.format == format2) {
-        sprintf(bin, "%s_%s%s%s", opcodeBins[i.opcode], regBins[i.reg1], regBins[i.reg2], getImediate(i.im, 16));
+        if(i.opcode == move)
+             sprintf(bin, "%s_%s%s%s%s", opcodeBins[i.opcode], regBins[i.reg2], "00000", regBins[i.reg1], "00000000000");
+        else
+            sprintf(bin, "%s_%s%s%s", opcodeBins[i.opcode], regBins[i.reg1], regBins[i.reg2], getImediate(i.im, 16));
     }
     else if (i.format == format3) {
-        sprintf(bin, "%s_%s%s%s", opcodeBins[i.opcode], regBins[i.reg1], "00000", getImediate(i.im, 16));
+        if(i.opcode == ldi)
+            sprintf(bin, "%s_%s%s%s", opcodeBins[i.opcode], "00000",regBins[i.reg1], getImediate(i.im, 16));
+        else
+         sprintf(bin, "%s_%s%s%s", opcodeBins[i.opcode], regBins[i.reg1], "00000", getImediate(i.im, 16));
     }
     else {
         sprintf(bin, "%s_%s", opcodeBins[i.opcode], getImediate(i.im, 26));
