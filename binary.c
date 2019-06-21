@@ -36,27 +36,28 @@ char * getImediate (int im, int size) {
 
 char * assembly2binary (Instruction i) {
     char * bin = (char *) malloc((32 + 4 + 2) * sizeof(char));
-    //store
-    //load
-    if (i.format == format1) {
-        sprintf(bin, "%s_%s%s%s%s", opcodeBins[i.opcode], regBins[i.reg1], regBins[i.reg2], regBins[i.reg3], "00000000000");
+      if (i.format == format1) {
+        sprintf(bin, "%s_%s_%s_%s_%s", opcodeBins[i.opcode], regBins[i.reg2], regBins[i.reg3], regBins[i.reg1], "00000000000");
     }
     else if (i.format == format2) {
         if(i.opcode == move)
-             sprintf(bin, "%s_%s%s%s%s", opcodeBins[i.opcode], regBins[i.reg2], "00000", regBins[i.reg1], "00000000000");
+             sprintf(bin, "%s_%s_%s_%s_%s", opcodeBins[i.opcode], regBins[i.reg2], "00000", regBins[i.reg1], "00000000000");
+        else if(i.opcode == str || i.opcode == load)
+            sprintf(bin, "%s_%s_%s_%s", opcodeBins[i.opcode], regBins[i.reg2], regBins[i.reg1], getImediate(i.im, 16));
         else
-            sprintf(bin, "%s_%s%s%s", opcodeBins[i.opcode], regBins[i.reg1], regBins[i.reg2], getImediate(i.im, 16));
+            sprintf(bin, "%s_%s_%s_%s", opcodeBins[i.opcode], regBins[i.reg1], regBins[i.reg2], getImediate(i.im, 16));
     }
     else if (i.format == format3) {
         if(i.opcode == ldi)
-            sprintf(bin, "%s_%s%s%s", opcodeBins[i.opcode], "00000",regBins[i.reg1], getImediate(i.im, 16));
+            sprintf(bin, "%s_%s_%s_%s", opcodeBins[i.opcode], "00000",regBins[i.reg1], getImediate(i.im, 16));
+        else if(i.opcode == in)
+            sprintf(bin, "%s_%s_%s_%s_%s", opcodeBins[i.opcode], "00000", "00000", regBins[i.reg1], "00000000000");
         else
-         sprintf(bin, "%s_%s%s%s", opcodeBins[i.opcode], regBins[i.reg1], "00000", getImediate(i.im, 16));
+         sprintf(bin, "%s_%s_%s_%s", opcodeBins[i.opcode], regBins[i.reg1], "00000", getImediate(i.im, 16));
     }
     else {
         sprintf(bin, "%s_%s", opcodeBins[i.opcode], getImediate(i.im, 26));
     }
-    //colocar separador '_'
     return bin;
 }
 
@@ -77,14 +78,14 @@ void generateBinary (AssemblyCode head, int size) {
 
     while (a != NULL) {
         if (a->kind == instr) {
-            fprintf(c, "\tassign Memoria[%d]\t=\t32'b", a->lineno);
-            printf("%d:\t", a->lineno);
+           // fprintf(c, "\tassign Memoria[%d]\t=\t32'b", a->lineno);
+        printf("instrmem[%d] = 32'b", a->lineno);
             bin = assembly2binary(a->line.instruction);
-            fprintf(c, "%s;\n", bin);
-            printf("%s\t// %s\n", bin, opcodes[a->line.instruction.opcode]);
+           // fprintf(c, "%s\n", bin);
+            printf("%s;// %s\n", bin, opcodes[a->line.instruction.opcode]);
         }
         else {
-            printf("// %s\n", a->line.label);
+            printf("//%s\n", a->line.label);
         }
         a = a->next;
     }
