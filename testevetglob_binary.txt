@@ -5,7 +5,7 @@ module MemoriaDeInstrucoes(	input [5:0] Endereco,
 		output [4:0] CampoC,
 		output [10:0] CampoD );
 
-	wire [31:0] Memoria [181:0];
+	wire [31:0] Memoria [48:0];
 	wire [31:0] Instrucao;
 
 

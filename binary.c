@@ -42,7 +42,7 @@ char * assembly2binary (Instruction i) {
     else if (i.format == format2) {
         if(i.opcode == move)
              sprintf(bin, "%s_%s_%s_%s_%s", opcodeBins[i.opcode], regBins[i.reg2], "00000", regBins[i.reg1], "00000000000");
-        else if(i.opcode == str || i.opcode == load)
+        else if(i.opcode == str || i.opcode == load || i.opcode == addi)
             sprintf(bin, "%s_%s_%s_%s", opcodeBins[i.opcode], regBins[i.reg2], regBins[i.reg1], getImediate(i.im, 16));
         else
             sprintf(bin, "%s_%s_%s_%s", opcodeBins[i.opcode], regBins[i.reg1], regBins[i.reg2], getImediate(i.im, 16));

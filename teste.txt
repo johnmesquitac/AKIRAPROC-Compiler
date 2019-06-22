@@ -1,4 +1,6 @@
 
+int vet [3];
+
 int input(void)
 {
 }
@@ -8,15 +10,10 @@ void output(int x)
 }
 
 void main (void){
-    int vet [3];
-    int i;
+    
+    int i; 
     while( i < 3){
-        vet[i]=i;
-        i=i+1;
-    }
-    i = 0;
-    while(i < 3){
-        output(vet[i]);
+        vet[i] = input();
         i = i + 1;
     }
 }
