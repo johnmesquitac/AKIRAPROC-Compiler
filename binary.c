@@ -16,7 +16,7 @@ const char * opcodes[] =  { "nop", "halt", "add", "addi", "sub", "mult", "divi",
 
 const char * opcodeBins[] =  {  "010010", "010011", "000000", "000010", "000001", "000100", "000101", "011100","001000", "001001", "000111", "001010", "000110", "011011",
                                 "011001", "011010", "010111", "011000", "010110", "001100", "001110", "001111", "010000", "010100", "010101", "001101",
-                                "001011","010001" }; // versão joão*/
+                                "001011","010001" }; 
 
 const char * regBins[] = {  "00000", "00001", "00010", "00011", "00100", "00101", "00110", "00111", "01000", "01001", "01010", "01011", "01100", "01101", "01110",
                             "01111", "10000", "10001", "10010", "10011", "10100", "10101", "10110", "10111", "11000", "11001", "11010", "11011", "11100", "11101",
@@ -65,17 +65,6 @@ void generateBinary (AssemblyCode head, int size) {
     AssemblyCode a = head;
     FILE * c = code;
     char * bin;
-
-    fprintf(c, "module MemoriaDeInstrucoes(	input [5:0] Endereco,\n");
-                                fprintf(c, "\t\toutput [5:0] Opcode,\n");
-                                fprintf(c, "\t\toutput [4:0] CampoA,\n");
-                                fprintf(c, "\t\toutput [4:0] CampoB,\n");
-                                fprintf(c, "\t\toutput [4:0] CampoC,\n");
-                                fprintf(c, "\t\toutput [10:0] CampoD );\n");
-
-    fprintf(c, "\n\twire [31:0] Memoria [%d:0];\n\twire [31:0] Instrucao;\n\n", size);
-    printf("\nC- Binary Code\n");
-
     while (a != NULL) {
         if (a->kind == instr) {
            // fprintf(c, "\tassign Memoria[%d]\t=\t32'b", a->lineno);
@@ -89,14 +78,5 @@ void generateBinary (AssemblyCode head, int size) {
         }
         a = a->next;
     }
-    
-    fprintf(c, "\n\tassign Instrucao = Memoria[Endereco];\n");
 
-    fprintf(c, "\tassign Opcode = Instrucao[31:26];\n");
-    fprintf(c, "\tassign CampoA = Instrucao[25:21];\n");
-    fprintf(c, "\tassign CampoB = Instrucao[20:16];\n");
-    fprintf(c, "\tassign CampoC = Instrucao[15:11];\n");
-    fprintf(c, "\tassign CampoD = Instrucao[10:0];\n");
-
-    fprintf(c, "\nendmodule\n");
 }

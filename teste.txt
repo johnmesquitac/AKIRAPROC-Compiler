@@ -1,19 +1,10 @@
-
-int vet [3];
-
-int input(void)
+int vet[3];
+void calc(int b[])
 {
+ b[1] = 2;
 }
 
-void output(int x)
+void main(void)
 {
-}
-
-void main (void){
-    
-    int i; 
-    while( i < 3){
-        vet[i] = input();
-        i = i + 1;
-    }
+    calc(vet);
 }

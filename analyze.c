@@ -139,8 +139,6 @@ static void insertNode( TreeNode * t)
  */
 void buildSymtab(TreeNode * syntaxTree)
 {
-  //printf("buildSymtab\n");
-  // TreeNode* aux = syntaxTree;
   traverse(syntaxTree,insertNode,nullProc);
   busca_main();
   typeCheck(syntaxTree);
