@@ -405,7 +405,7 @@ void generateInstruction(QuadList l)
             break;
 
         case opVEC:
-            v = getVarKind(a2.contents.var.name, a2.contents.var.scope); //a2.contents.var.scope);
+            v = getVarKind(a2.contents.var.name, a2.contents.var.scope); //a2.contents.var.scope;
             if (v == simple)
                 v = getVarKind(a2.contents.var.name, "Global");
             aux = getVarMemLoc(a2.contents.var.name, a2.contents.var.scope); // a2.contents.var.scope);
@@ -453,7 +453,6 @@ void generateInstruction(QuadList l)
         case opFUN:
             if (jmpmain == 0)
             {
-                // printf("entrou no opFUN \n");
                 instructionFormat4(jmp, -1, "main");
                 jmpmain = 1;
             }

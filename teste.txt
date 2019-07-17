@@ -1,7 +1,9 @@
+int a;
 int vet[3];
 void calc(int b[])
 {
  b[1] = 2;
+ b[2]= 3;
 }
 
 void main(void)
