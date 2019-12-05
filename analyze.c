@@ -64,7 +64,7 @@ static void insertNode( TreeNode * t)
       {
         //  printf("AssignK\n");
           if (st_lookup(t->child[0]->attr.name) == -1){
-          /* não encontrado na tabela, cariavel não declarada */
+          /* não encontrado na tabela, variavel não declarada */
             fprintf(listing,"Erro: A variavel %s não foi declarada. [%d]\n", t->child[0]->attr.name, t->lineno);
             Error = TRUE;
           }

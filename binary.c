@@ -71,7 +71,7 @@ void generateBinary (AssemblyCode head, int size) {
         printf("instrmem[%d] = 32'b", a->lineno);
             bin = assembly2binary(a->line.instruction);
            // fprintf(c, "%s\n", bin);
-            printf("%s;// %s\n", bin, opcodes[a->line.instruction.opcode]);
+            printf("%s;\t// %s\n", bin, opcodes[a->line.instruction.opcode]);
         }
         else {
             printf("//%s\n", a->line.label);

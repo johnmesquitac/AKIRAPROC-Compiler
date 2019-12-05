@@ -1,0 +1,2397 @@
+/* 10 problemas - PC1 27/08)
+
+int input(void)
+{
+
+}
+
+void output(int x)
+{
+
+}
+
+int vet[4];
+
+int minloc ( int a[], int low, int high )
+{	int i; int x; int k;
+	k = low;
+	x = a[low];
+	i = low + 1;
+	while (i < high){
+		if (a[i] < x){
+			x = a[i];
+			k = i;
+		}
+		i = i + 1;
+	}
+	return k;
+}
+
+void sort( int a[], int low, int high)
+{	int i; int k;
+	i = low;
+	while (i < high-1){
+		int t;
+		k = minloc(a,i,high);
+		t = a[k];
+		a[k] = a[i];
+		a[i] = t;
+		i = i + 1;
+	}
+}
+
+int gcd (int u, int v)
+{       
+	if (v == 0) return u ;
+	else return gcd(v,u-u/v*v);
+	/* u-u/v*v == u mod v */
+}
+
+int fatorial (int n){       
+    if (n < 2) return 1;
+    else return fatorial(n-1)*n;
+}
+
+int fibonacci(int n){
+    int a; int b; int c; int i;
+    if (n <= 0) return 0;
+    else if (n == 1) return 1;
+    else {
+        a = 0; 
+        b = 1;
+	i = 1;  
+        while (i < n){
+            c = b;
+            b = b + a;
+            a = c;
+            i = i + 1;
+        }
+        return b;
+    }
+}
+
+int calculadora(int a, int b, int op){
+    if (op == 1) return a+b;
+    else if (op == 2) return a-b;
+    else if (op == 3) return a*b;
+    else if (op == 4) return a/b;
+    else if (op == 5) return a-a/b*b; /* mod(a,b) */
+}
+
+int mediaVector(int vec[], int size){
+    int i; int total;
+    i = 0; total = 0;
+    while(i < size){
+        total = total + vec[i];
+        i = i + 1;        
+    }
+    return total/size;
+}
+
+int parimpar(int x)
+{
+	if ((x-x/2*2)==0)
+		return 1;
+	else
+		return 0;
+}
+
+int somavetor(int vec[], int vecaux[], int size)
+{
+	int i;
+    i=0;
+	while(i<size)
+	{
+		vec[i] = vec[i]+vecaux[i] ;
+		i = i+1;
+	}
+}
+
+int outputvec(int vec[], int size)
+{
+	int i;
+    i=0;
+	while(i<size)
+	{
+		output(vec[i]);
+		i=i+1;
+	}
+}
+
+int inputvector(int vec[],int size)
+{
+    int i;
+    i=0;
+    while(i<size){
+        vec[i] = input();
+        i = i+1;
+    }
+}
+
+int varianciaVector(int vec[], int size){
+    int i; int total; int media; int aux;
+    i = 0; total = 0;
+    media = mediaVector(vec,size);
+    while(i < size){
+        aux = vec[i] - media;
+        total = total + (aux*aux);
+        i = i + 1;        
+    }
+    return total/size;
+}
+
+int menor (int u, int v)
+{
+    if (u <= v)
+    {
+        return u;
+    }
+    else
+    {
+        return v;
+    }
+}
+
+int maior (int u, int v)
+{
+    if (u > v)
+    {
+        return u;
+    }
+    else
+    {
+        return v;
+    }
+}
+
+void main (void)
+{
+    int type;
+    int x; int y; int i; int z;
+    
+    type = input();
+    while(type>0)
+    {
+        if(type==1){ /*gcd*/
+            	x = input(); y = input();
+	            output(gcd(x,y));
+        }
+        else if (type==2){ /*selectionsort*/
+        		i=0;
+           		while (i < 4){
+		    		vet[i] = input();
+		    		i = i + 1;
+	    		}
+	    		sort(vet,0,4);
+	   			i = 0;
+	    		while (i < 4){
+					output(vet[i]);
+					i = i + 1;
+	    		}	    		
+    	}
+			else if(type==3) /*fatorial*/
+			{
+				x = input();
+				output(fatorial(x));
+			}
+				else if(type==4) /*fibonacci*/
+				{
+					x = input();
+					output(fibonacci(x));
+				}
+					else if(type==5) /*maior*/
+					{
+                        x= input();
+                        y= input();
+                        output(maior(x,y));
+					}
+						else if(type==6) /*calculadora*/
+						{
+							x = input();
+							y= input();
+							z= input();
+							output(calculadora(x,y,z));
+						}
+							else if(type==7)  /*mediaVector*/
+							{
+								i=0;
+           		                while (i < 4){
+		    		                 vet[i] = input();
+		    		                 i = i + 1;
+	    		                }
+								output(mediaVector(vet,4));
+							}
+								else if(type==8) /*par ou impar*/
+								{
+									x=input();
+									output(parimpar(x));
+								}
+									else if(type==9) /*menor*/
+									{
+										x= input();
+                                        y= input();
+                                        output(menor(x,y));
+									}
+									else if(type==10) 
+									{
+										i=0;
+           		                        while (i < 4){
+		    		                     vet[i] = input();
+		    		                    i = i + 1;
+	    		                        }
+                                        output(varianciaVector(vet,4));
+									}
+					}
+
+     type = input();
+    }
+
+/**********Código em Assembly Gerado*************/
+
+0:      ldi $sp, 0
+1:      ldi $gp, 32
+2:      ldi $ra, 47
+3:      jmp 613
+.minloc
+4:      str $a0, $sp, 0
+5:      str $a1, $sp, 1
+6:      str $a2, $sp, 2
+7:      load $t0, $sp, 5
+8:      load $t1, $sp, 1
+9:      move $t0, $t1
+10:     str $t0, $sp, 5
+11:     load $t2, $sp, 4
+12:     load $t4, $sp, 1
+13:     load $t3, $sp, 0
+14:     add $t4, $t4, $t3
+15:     load $t3, $t4, 0
+16:     move $t2, $t3
+17:     str $t2, $sp, 4
+18:     load $t5, $sp, 3
+19:     load $t6, $sp, 1
+20:     ldi $t7, 1
+21:     add $t8, $t6, $t7
+22:     move $t5, $t8
+23:     str $t5, $sp, 3
+.L0
+24:     load $t9, $sp, 3
+25:     load $t10, $sp, 2
+26:     slt $t11, $t9, $t10
+27:     beq $t11, $zero, 54
+28:     load $t13, $sp, 3
+29:     load $t12, $sp, 0
+30:     add $t13, $t13, $t12
+31:     load $t12, $t13, 0
+32:     load $t14, $sp, 4
+33:     slt $t15, $t12, $t14
+34:     beq $t15, $zero, 47
+35:     load $t0, $sp, 4
+36:     load $t2, $sp, 3
+37:     load $t1, $sp, 0
+38:     add $t2, $t2, $t1
+39:     load $t1, $t2, 0
+40:     move $t0, $t1
+41:     str $t0, $sp, 4
+42:     load $t3, $sp, 5
+43:     load $t4, $sp, 3
+44:     move $t3, $t4
+45:     str $t3, $sp, 5
+46:     jmp 47
+.L1
+.L2
+47:     load $t5, $sp, 3
+48:     load $t6, $sp, 3
+49:     ldi $t7, 1
+50:     add $t8, $t6, $t7
+51:     move $t5, $t8
+52:     str $t5, $sp, 3
+53:     jmp 24
+.L3
+54:     load $t9, $sp, 5
+55:     move $ret, $t9
+56:     addi $ra, $ra, -1
+57:     load $jmp, $ra, 0
+58:     jr $jmp
+59:     addi $ra, $ra, -1
+60:     load $jmp, $ra, 0
+61:     jr $jmp
+.sort
+62:     str $a0, $sp, 0
+63:     str $a1, $sp, 1
+64:     str $a2, $sp, 2
+65:     load $t10, $sp, 3
+66:     load $t11, $sp, 1
+67:     move $t10, $t11
+68:     str $t10, $sp, 3
+.L4
+69:     load $t12, $sp, 3
+70:     load $t13, $sp, 2
+71:     ldi $t14, 1
+72:     sub $t15, $t13, $t14
+73:     slt $t0, $t12, $t15
+74:     beq $t0, $zero, 122
+75:     load $t1, $sp, 4
+76:     load $t2, $sp, 0
+77:     move $a0, $t2
+78:     load $t3, $sp, 3
+79:     move $a1, $t3
+80:     load $t4, $sp, 2
+81:     move $a2, $t4
+82:     addi $sp, $sp, 6
+83:     ldi $jmp, 87
+84:     str $jmp, $ra, 0
+85:     addi $ra, $ra, 1
+86:     jmp 4
+87:     move $t5, $ret
+88:     addi $sp, $sp, -6
+89:     move $t1, $t5
+90:     str $t1, $sp, 4
+91:     load $t6, $sp, 5
+92:     load $t8, $sp, 4
+93:     load $t7, $sp, 0
+94:     add $t8, $t8, $t7
+95:     load $t7, $t8, 0
+96:     move $t6, $t7
+97:     str $t6, $sp, 5
+98:     load $t10, $sp, 4
+99:     load $t9, $sp, 0
+100:    add $t10, $t10, $t9
+101:    load $t9, $t10, 0
+102:    load $t12, $sp, 3
+103:    load $t11, $sp, 0
+104:    add $t12, $t12, $t11
+105:    load $t11, $t12, 0
+106:    move $t9, $t11
+107:    str $t9, $t10, 0
+108:    load $t14, $sp, 3
+109:    load $t13, $sp, 0
+110:    add $t14, $t14, $t13
+111:    load $t13, $t14, 0
+112:    load $t15, $sp, 5
+113:    move $t13, $t15
+114:    str $t13, $t14, 0
+115:    load $t0, $sp, 3
+116:    load $t1, $sp, 3
+117:    ldi $t2, 1
+118:    add $t3, $t1, $t2
+119:    move $t0, $t3
+120:    str $t0, $sp, 3
+121:    jmp 69
+.L5
+122:    addi $ra, $ra, -1
+123:    load $jmp, $ra, 0
+124:    jr $jmp
+.gcd
+125:    str $a0, $sp, 0
+126:    str $a1, $sp, 1
+127:    load $t4, $sp, 1
+128:    ldi $t5, 0
+129:    sge $t6, $t4, $t5
+130:    sle $t7, $t4, $t5
+131:    and $t8, $t6, $t7
+132:    beq $t8, $zero, 139
+133:    load $t9, $sp, 0
+134:    move $ret, $t9
+135:    addi $ra, $ra, -1
+136:    load $jmp, $ra, 0
+137:    jr $jmp
+138:    jmp 161
+.L6
+139:    load $t10, $sp, 1
+140:    move $a0, $t10
+141:    load $t11, $sp, 0
+142:    load $t12, $sp, 0
+143:    load $t13, $sp, 1
+144:    divi $t14, $t12, $t13
+145:    load $t15, $sp, 1
+146:    mult $t0, $t14, $t15
+147:    sub $t1, $t11, $t0
+148:    move $a1, $t1
+149:    addi $sp, $sp, 2
+150:    ldi $jmp, 154
+151:    str $jmp, $ra, 0
+152:    addi $ra, $ra, 1
+153:    jmp 125
+154:    move $t2, $ret
+155:    addi $sp, $sp, -2
+156:    move $ret, $t2
+157:    addi $ra, $ra, -1
+158:    load $jmp, $ra, 0
+159:    jr $jmp
+160:    jmp 161
+.L7
+161:    addi $ra, $ra, -1
+162:    load $jmp, $ra, 0
+163:    jr $jmp
+.fatorial
+164:    str $a0, $sp, 0
+165:    load $t3, $sp, 0
+166:    ldi $t4, 2
+167:    slt $t5, $t3, $t4
+168:    beq $t5, $zero, 175
+169:    ldi $t6, 1
+170:    move $ret, $t6
+171:    addi $ra, $ra, -1
+172:    load $jmp, $ra, 0
+173:    jr $jmp
+174:    jmp 193
+.L8
+175:    load $t7, $sp, 0
+176:    ldi $t8, 1
+177:    sub $t9, $t7, $t8
+178:    move $a0, $t9
+179:    addi $sp, $sp, 1
+180:    ldi $jmp, 184
+181:    str $jmp, $ra, 0
+182:    addi $ra, $ra, 1
+183:    jmp 164
+184:    move $t10, $ret
+185:    addi $sp, $sp, -1
+186:    load $t11, $sp, 0
+187:    mult $t12, $t10, $t11
+188:    move $ret, $t12
+189:    addi $ra, $ra, -1
+190:    load $jmp, $ra, 0
+191:    jr $jmp
+192:    jmp 193
+.L9
+193:    addi $ra, $ra, -1
+194:    load $jmp, $ra, 0
+195:    jr $jmp
+.fibonacci
+196:    str $a0, $sp, 0
+197:    load $t13, $sp, 0
+198:    ldi $t14, 0
+199:    sle $t15, $t13, $t14
+200:    beq $t15, $zero, 207
+201:    ldi $t0, 0
+202:    move $ret, $t0
+203:    addi $ra, $ra, -1
+204:    load $jmp, $ra, 0
+205:    jr $jmp
+206:    jmp 263
+.L10
+207:    load $t1, $sp, 0
+208:    ldi $t2, 1
+209:    sge $t3, $t1, $t2
+210:    sle $t4, $t1, $t2
+211:    and $t5, $t3, $t4
+212:    beq $t5, $zero, 219
+213:    ldi $t6, 1
+214:    move $ret, $t6
+215:    addi $ra, $ra, -1
+216:    load $jmp, $ra, 0
+217:    jr $jmp
+218:    jmp 262
+.L11
+219:    load $t7, $sp, 1
+220:    ldi $t8, 0
+221:    move $t7, $t8
+222:    str $t7, $sp, 1
+223:    load $t9, $sp, 2
+224:    ldi $t10, 1
+225:    move $t9, $t10
+226:    str $t9, $sp, 2
+227:    load $t11, $sp, 4
+228:    ldi $t12, 1
+229:    move $t11, $t12
+230:    str $t11, $sp, 4
+.L12
+231:    load $t13, $sp, 4
+232:    load $t14, $sp, 0
+233:    slt $t15, $t13, $t14
+234:    beq $t15, $zero, 256
+235:    load $t0, $sp, 3
+236:    load $t1, $sp, 2
+237:    move $t0, $t1
+238:    str $t0, $sp, 3
+239:    load $t2, $sp, 2
+240:    load $t3, $sp, 2
+241:    load $t4, $sp, 1
+242:    add $t5, $t3, $t4
+243:    move $t2, $t5
+244:    str $t2, $sp, 2
+245:    load $t6, $sp, 1
+246:    load $t7, $sp, 3
+247:    move $t6, $t7
+248:    str $t6, $sp, 1
+249:    load $t8, $sp, 4
+250:    load $t9, $sp, 4
+251:    ldi $t10, 1
+252:    add $t11, $t9, $t10
+253:    move $t8, $t11
+254:    str $t8, $sp, 4
+255:    jmp 231
+.L13
+256:    load $t12, $sp, 2
+257:    move $ret, $t12
+258:    addi $ra, $ra, -1
+259:    load $jmp, $ra, 0
+260:    jr $jmp
+261:    jmp 262
+.L14
+262:    jmp 263
+.L15
+263:    addi $ra, $ra, -1
+264:    load $jmp, $ra, 0
+265:    jr $jmp
+.calculadora
+266:    str $a0, $sp, 0
+267:    str $a1, $sp, 1
+268:    str $a2, $sp, 2
+269:    load $t13, $sp, 2
+270:    ldi $t14, 1
+271:    sge $t15, $t13, $t14
+272:    sle $t0, $t13, $t14
+273:    and $t1, $t15, $t0
+274:    beq $t1, $zero, 283
+275:    load $t2, $sp, 0
+276:    load $t3, $sp, 1
+277:    add $t4, $t2, $t3
+278:    move $ret, $t4
+279:    addi $ra, $ra, -1
+280:    load $jmp, $ra, 0
+281:    jr $jmp
+282:    jmp 347
+.L16
+283:    load $t5, $sp, 2
+284:    ldi $t6, 2
+285:    sge $t7, $t5, $t6
+286:    sle $t8, $t5, $t6
+287:    and $t9, $t7, $t8
+288:    beq $t9, $zero, 297
+289:    load $t10, $sp, 0
+290:    load $t11, $sp, 1
+291:    sub $t12, $t10, $t11
+292:    move $ret, $t12
+293:    addi $ra, $ra, -1
+294:    load $jmp, $ra, 0
+295:    jr $jmp
+296:    jmp 346
+.L17
+297:    load $t13, $sp, 2
+298:    ldi $t14, 3
+299:    sge $t15, $t13, $t14
+300:    sle $t0, $t13, $t14
+301:    and $t1, $t15, $t0
+302:    beq $t1, $zero, 311
+303:    load $t2, $sp, 0
+304:    load $t3, $sp, 1
+305:    mult $t4, $t2, $t3
+306:    move $ret, $t4
+307:    addi $ra, $ra, -1
+308:    load $jmp, $ra, 0
+309:    jr $jmp
+310:    jmp 345
+.L18
+311:    load $t5, $sp, 2
+312:    ldi $t6, 4
+313:    sge $t7, $t5, $t6
+314:    sle $t8, $t5, $t6
+315:    and $t9, $t7, $t8
+316:    beq $t9, $zero, 325
+317:    load $t10, $sp, 0
+318:    load $t11, $sp, 1
+319:    divi $t12, $t10, $t11
+320:    move $ret, $t12
+321:    addi $ra, $ra, -1
+322:    load $jmp, $ra, 0
+323:    jr $jmp
+324:    jmp 344
+.L19
+325:    load $t13, $sp, 2
+326:    ldi $t14, 5
+327:    sge $t15, $t13, $t14
+328:    sle $t0, $t13, $t14
+329:    and $t1, $t15, $t0
+330:    beq $t1, $zero, 343
+331:    load $t2, $sp, 0
+332:    load $t3, $sp, 0
+333:    load $t4, $sp, 1
+334:    divi $t5, $t3, $t4
+335:    load $t6, $sp, 1
+336:    mult $t7, $t5, $t6
+337:    sub $t8, $t2, $t7
+338:    move $ret, $t8
+339:    addi $ra, $ra, -1
+340:    load $jmp, $ra, 0
+341:    jr $jmp
+342:    jmp 343
+.L20
+.L21
+343:    jmp 344
+.L22
+344:    jmp 345
+.L23
+345:    jmp 346
+.L24
+346:    jmp 347
+.L25
+347:    addi $ra, $ra, -1
+348:    load $jmp, $ra, 0
+349:    jr $jmp
+.mediaVector
+350:    str $a0, $sp, 0
+351:    str $a1, $sp, 1
+352:    load $t9, $sp, 2
+353:    ldi $t10, 0
+354:    move $t9, $t10
+355:    str $t9, $sp, 2
+356:    load $t11, $sp, 3
+357:    ldi $t12, 0
+358:    move $t11, $t12
+359:    str $t11, $sp, 3
+.L26
+360:    load $t13, $sp, 2
+361:    load $t14, $sp, 1
+362:    slt $t15, $t13, $t14
+363:    beq $t15, $zero, 380
+364:    load $t0, $sp, 3
+365:    load $t1, $sp, 3
+366:    load $t3, $sp, 2
+367:    load $t2, $sp, 0
+368:    add $t3, $t3, $t2
+369:    load $t2, $t3, 0
+370:    add $t4, $t1, $t2
+371:    move $t0, $t4
+372:    str $t0, $sp, 3
+373:    load $t5, $sp, 2
+374:    load $t6, $sp, 2
+375:    ldi $t7, 1
+376:    add $t8, $t6, $t7
+377:    move $t5, $t8
+378:    str $t5, $sp, 2
+379:    jmp 360
+.L27
+380:    load $t9, $sp, 3
+381:    load $t10, $sp, 1
+382:    divi $t11, $t9, $t10
+383:    move $ret, $t11
+384:    addi $ra, $ra, -1
+385:    load $jmp, $ra, 0
+386:    jr $jmp
+387:    addi $ra, $ra, -1
+388:    load $jmp, $ra, 0
+389:    jr $jmp
+.parimpar
+390:    str $a0, $sp, 0
+391:    load $t12, $sp, 0
+392:    load $t13, $sp, 0
+393:    ldi $t14, 2
+394:    divi $t15, $t13, $t14
+395:    ldi $t0, 2
+396:    mult $t1, $t15, $t0
+397:    sub $t2, $t12, $t1
+398:    ldi $t3, 0
+399:    sge $t4, $t2, $t3
+400:    sle $t5, $t2, $t3
+401:    and $t6, $t4, $t5
+402:    beq $t6, $zero, 409
+403:    ldi $t7, 1
+404:    move $ret, $t7
+405:    addi $ra, $ra, -1
+406:    load $jmp, $ra, 0
+407:    jr $jmp
+408:    jmp 415
+.L28
+409:    ldi $t8, 0
+410:    move $ret, $t8
+411:    addi $ra, $ra, -1
+412:    load $jmp, $ra, 0
+413:    jr $jmp
+414:    jmp 415
+.L29
+415:    addi $ra, $ra, -1
+416:    load $jmp, $ra, 0
+417:    jr $jmp
+.somavetor
+418:    str $a0, $sp, 0
+419:    str $a1, $sp, 1
+420:    str $a2, $sp, 2
+421:    load $t9, $sp, 3
+422:    ldi $t10, 0
+423:    move $t9, $t10
+424:    str $t9, $sp, 3
+.L30
+425:    load $t11, $sp, 3
+426:    load $t12, $sp, 2
+427:    slt $t13, $t11, $t12
+428:    beq $t13, $zero, 451
+429:    load $t15, $sp, 3
+430:    load $t14, $sp, 0
+431:    add $t15, $t15, $t14
+432:    load $t14, $t15, 0
+433:    load $t1, $sp, 3
+434:    load $t0, $sp, 0
+435:    add $t1, $t1, $t0
+436:    load $t0, $t1, 0
+437:    load $t3, $sp, 3
+438:    load $t2, $sp, 1
+439:    add $t3, $t3, $t2
+440:    load $t2, $t3, 0
+441:    add $t4, $t0, $t2
+442:    move $t14, $t4
+443:    str $t14, $t15, 0
+444:    load $t5, $sp, 3
+445:    load $t6, $sp, 3
+446:    ldi $t7, 1
+447:    add $t8, $t6, $t7
+448:    move $t5, $t8
+449:    str $t5, $sp, 3
+450:    jmp 425
+.L31
+451:    addi $ra, $ra, -1
+452:    load $jmp, $ra, 0
+453:    jr $jmp
+.outputvec
+454:    str $a0, $sp, 0
+455:    str $a1, $sp, 1
+456:    load $t9, $sp, 2
+457:    ldi $t10, 0
+458:    move $t9, $t10
+459:    str $t9, $sp, 2
+.L32
+460:    load $t11, $sp, 2
+461:    load $t12, $sp, 1
+462:    slt $t13, $t11, $t12
+463:    beq $t13, $zero, 479
+464:    load $t15, $sp, 2
+465:    load $t14, $sp, 0
+466:    add $t15, $t15, $t14
+467:    load $t14, $t15, 0
+468:    move $a0, $t14
+469:    move $t0, $a2
+470:    out $t0
+471:    nop
+472:    load $t1, $sp, 2
+473:    load $t2, $sp, 2
+474:    ldi $t3, 1
+475:    add $t4, $t2, $t3
+476:    move $t1, $t4
+477:    str $t1, $sp, 2
+478:    jmp 460
+.L33
+479:    addi $ra, $ra, -1
+480:    load $jmp, $ra, 0
+481:    jr $jmp
+.inputvector
+482:    str $a0, $sp, 0
+483:    str $a1, $sp, 1
+484:    load $t5, $sp, 2
+485:    ldi $t6, 0
+486:    move $t5, $t6
+487:    str $t5, $sp, 2
+.L34
+488:    load $t7, $sp, 2
+489:    load $t8, $sp, 1
+490:    slt $t9, $t7, $t8
+491:    beq $t9, $zero, 506
+492:    load $t11, $sp, 2
+493:    load $t10, $sp, 0
+494:    add $t11, $t11, $t10
+495:    load $t10, $t11, 0
+496:    in $t12
+497:    move $t10, $t12
+498:    str $t10, $t11, 0
+499:    load $t13, $sp, 2
+500:    load $t14, $sp, 2
+501:    ldi $t15, 1
+502:    add $t0, $t14, $t15
+503:    move $t13, $t0
+504:    str $t13, $sp, 2
+505:    jmp 488
+.L35
+506:    addi $ra, $ra, -1
+507:    load $jmp, $ra, 0
+508:    jr $jmp
+.varianciaVector
+509:    str $a0, $sp, 0
+510:    str $a1, $sp, 1
+511:    load $t1, $sp, 2
+512:    ldi $t2, 0
+513:    move $t1, $t2
+514:    str $t1, $sp, 2
+515:    load $t3, $sp, 3
+516:    ldi $t4, 0
+517:    move $t3, $t4
+518:    str $t3, $sp, 3
+519:    load $t5, $sp, 4
+520:    load $t6, $sp, 0
+521:    move $a0, $t6
+522:    load $t7, $sp, 1
+523:    move $a1, $t7
+524:    addi $sp, $sp, 6
+525:    ldi $jmp, 529
+526:    str $jmp, $ra, 0
+527:    addi $ra, $ra, 1
+528:    jmp 350
+529:    move $t8, $ret
+530:    addi $sp, $sp, -6
+531:    move $t5, $t8
+532:    str $t5, $sp, 4
+.L36
+533:    load $t9, $sp, 2
+534:    load $t10, $sp, 1
+535:    slt $t11, $t9, $t10
+536:    beq $t11, $zero, 561
+537:    load $t12, $sp, 5
+538:    load $t14, $sp, 2
+539:    load $t13, $sp, 0
+540:    add $t14, $t14, $t13
+541:    load $t13, $t14, 0
+542:    load $t15, $sp, 4
+543:    sub $t0, $t13, $t15
+544:    move $t12, $t0
+545:    str $t12, $sp, 5
+546:    load $t1, $sp, 3
+547:    load $t2, $sp, 3
+548:    load $t3, $sp, 5
+549:    load $t4, $sp, 5
+550:    mult $t5, $t3, $t4
+551:    add $t6, $t2, $t5
+552:    move $t1, $t6
+553:    str $t1, $sp, 3
+554:    load $t7, $sp, 2
+555:    load $t8, $sp, 2
+556:    ldi $t9, 1
+557:    add $t10, $t8, $t9
+558:    move $t7, $t10
+559:    str $t7, $sp, 2
+560:    jmp 533
+.L37
+561:    load $t11, $sp, 3
+562:    load $t12, $sp, 1
+563:    divi $t13, $t11, $t12
+564:    move $ret, $t13
+565:    addi $ra, $ra, -1
+566:    load $jmp, $ra, 0
+567:    jr $jmp
+568:    addi $ra, $ra, -1
+569:    load $jmp, $ra, 0
+570:    jr $jmp
+.menor
+571:    str $a0, $sp, 0
+572:    str $a1, $sp, 1
+573:    load $t14, $sp, 0
+574:    load $t15, $sp, 1
+575:    sle $t0, $t14, $t15
+576:    beq $t0, $zero, 583
+577:    load $t1, $sp, 0
+578:    move $ret, $t1
+579:    addi $ra, $ra, -1
+580:    load $jmp, $ra, 0
+581:    jr $jmp
+582:    jmp 589
+.L38
+583:    load $t2, $sp, 1
+584:    move $ret, $t2
+585:    addi $ra, $ra, -1
+586:    load $jmp, $ra, 0
+587:    jr $jmp
+588:    jmp 589
+.L39
+589:    addi $ra, $ra, -1
+590:    load $jmp, $ra, 0
+591:    jr $jmp
+.maior
+592:    str $a0, $sp, 0
+593:    str $a1, $sp, 1
+594:    load $t3, $sp, 0
+595:    load $t4, $sp, 1
+596:    sgt $t5, $t3, $t4
+597:    beq $t5, $zero, 604
+598:    load $t6, $sp, 0
+599:    move $ret, $t6
+600:    addi $ra, $ra, -1
+601:    load $jmp, $ra, 0
+602:    jr $jmp
+603:    jmp 610
+.L40
+604:    load $t7, $sp, 1
+605:    move $ret, $t7
+606:    addi $ra, $ra, -1
+607:    load $jmp, $ra, 0
+608:    jr $jmp
+609:    jmp 610
+.L41
+610:    addi $ra, $ra, -1
+611:    load $jmp, $ra, 0
+612:    jr $jmp
+.main
+613:    load $t8, $sp, 0
+614:    in $t9
+615:    move $t8, $t9
+616:    str $t8, $sp, 0
+.L42
+617:    load $t10, $sp, 0
+618:    ldi $t11, 0
+619:    sgt $t12, $t10, $t11
+620:    beq $t12, $zero, 978
+621:    load $t13, $sp, 0
+622:    ldi $t14, 1
+623:    sge $t15, $t13, $t14
+624:    sle $t0, $t13, $t14
+625:    and $t1, $t15, $t0
+626:    beq $t1, $zero, 651
+627:    load $t2, $sp, 1
+628:    in $t3
+629:    move $t2, $t3
+630:    str $t2, $sp, 1
+631:    load $t4, $sp, 2
+632:    in $t5
+633:    move $t4, $t5
+634:    str $t4, $sp, 2
+635:    load $t6, $sp, 1
+636:    move $a0, $t6
+637:    load $t7, $sp, 2
+638:    move $a1, $t7
+639:    addi $sp, $sp, 5
+640:    ldi $jmp, 644
+641:    str $jmp, $ra, 0
+642:    addi $ra, $ra, 1
+643:    jmp 125
+644:    move $t8, $ret
+645:    addi $sp, $sp, -5
+646:    move $a0, $t8
+647:    move $t9, $a0
+648:    out $t9
+649:    nop
+650:    jmp 977
+.L43
+651:    load $t10, $sp, 0
+652:    ldi $t11, 2
+653:    sge $t12, $t10, $t11
+654:    sle $t13, $t10, $t11
+655:    and $t14, $t12, $t13
+656:    beq $t14, $zero, 714
+657:    load $t15, $sp, 3
+658:    ldi $t0, 0
+659:    move $t15, $t0
+660:    str $t15, $sp, 3
+.L44
+661:    load $t1, $sp, 3
+662:    ldi $t2, 4
+663:    slt $t3, $t1, $t2
+664:    beq $t3, $zero, 678
+665:    load $t5, $sp, 3
+666:    add $t5, $t5, $gp
+667:    load $t4, $t5, 0
+668:    in $t6
+669:    move $t4, $t6
+670:    str $t4, $t5, 0
+671:    load $t7, $sp, 3
+672:    load $t8, $sp, 3
+673:    ldi $t9, 1
+674:    add $t10, $t8, $t9
+675:    move $t7, $t10
+676:    str $t7, $sp, 3
+677:    jmp 661
+.L45
+678:    addi $t11, $gp, 0
+679:    move $a0, $t11
+680:    ldi $t12, 0
+681:    move $a1, $t12
+682:    ldi $t13, 4
+683:    move $a2, $t13
+684:    addi $sp, $sp, 5
+685:    ldi $jmp, 689
+686:    str $jmp, $ra, 0
+687:    addi $ra, $ra, 1
+688:    jmp 62
+689:    move $t14, $ret
+690:    addi $sp, $sp, -5
+691:    load $t15, $sp, 3
+692:    ldi $t0, 0
+693:    move $t15, $t0
+694:    str $t15, $sp, 3
+.L46
+695:    load $t1, $sp, 3
+696:    ldi $t2, 4
+697:    slt $t3, $t1, $t2
+698:    beq $t3, $zero, 713
+699:    load $t5, $sp, 3
+700:    add $t5, $t5, $gp
+701:    load $t4, $t5, 0
+702:    move $a0, $t4
+703:    move $t6, $a0
+704:    out $t6
+705:    nop
+706:    load $t7, $sp, 3
+707:    load $t8, $sp, 3
+708:    ldi $t9, 1
+709:    add $t10, $t8, $t9
+710:    move $t7, $t10
+711:    str $t7, $sp, 3
+712:    jmp 695
+.L47
+713:    jmp 976
+.L48
+714:    load $t11, $sp, 0
+715:    ldi $t12, 3
+716:    sge $t13, $t11, $t12
+717:    sle $t14, $t11, $t12
+718:    and $t15, $t13, $t14
+719:    beq $t15, $zero, 738
+720:    load $t0, $sp, 1
+721:    in $t1
+722:    move $t0, $t1
+723:    str $t0, $sp, 1
+724:    load $t2, $sp, 1
+725:    move $a0, $t2
+726:    addi $sp, $sp, 5
+727:    ldi $jmp, 731
+728:    str $jmp, $ra, 0
+729:    addi $ra, $ra, 1
+730:    jmp 164
+731:    move $t3, $ret
+732:    addi $sp, $sp, -5
+733:    move $a0, $t3
+734:    move $t4, $a0
+735:    out $t4
+736:    nop
+737:    jmp 975
+.L49
+738:    load $t5, $sp, 0
+739:    ldi $t6, 4
+740:    sge $t7, $t5, $t6
+741:    sle $t8, $t5, $t6
+742:    and $t9, $t7, $t8
+743:    beq $t9, $zero, 762
+744:    load $t10, $sp, 1
+745:    in $t11
+746:    move $t10, $t11
+747:    str $t10, $sp, 1
+748:    load $t12, $sp, 1
+749:    move $a0, $t12
+750:    addi $sp, $sp, 5
+751:    ldi $jmp, 755
+752:    str $jmp, $ra, 0
+753:    addi $ra, $ra, 1
+754:    jmp 196
+755:    move $t13, $ret
+756:    addi $sp, $sp, -5
+757:    move $a0, $t13
+758:    move $t14, $a0
+759:    out $t14
+760:    nop
+761:    jmp 974
+.L50
+762:    load $t15, $sp, 0
+763:    ldi $t0, 5
+764:    sge $t1, $t15, $t0
+765:    sle $t2, $t15, $t0
+766:    and $t3, $t1, $t2
+767:    beq $t3, $zero, 792
+768:    load $t4, $sp, 1
+769:    in $t5
+770:    move $t4, $t5
+771:    str $t4, $sp, 1
+772:    load $t6, $sp, 2
+773:    in $t7
+774:    move $t6, $t7
+775:    str $t6, $sp, 2
+776:    load $t8, $sp, 1
+777:    move $a0, $t8
+778:    load $t9, $sp, 2
+779:    move $a1, $t9
+780:    addi $sp, $sp, 5
+781:    ldi $jmp, 785
+782:    str $jmp, $ra, 0
+783:    addi $ra, $ra, 1
+784:    jmp 592
+785:    move $t10, $ret
+786:    addi $sp, $sp, -5
+787:    move $a0, $t10
+788:    move $t11, $a0
+789:    out $t11
+790:    nop
+791:    jmp 973
+.L51
+792:    load $t12, $sp, 0
+793:    ldi $t13, 6
+794:    sge $t14, $t12, $t13
+795:    sle $t15, $t12, $t13
+796:    and $t0, $t14, $t15
+797:    beq $t0, $zero, 828
+798:    load $t1, $sp, 1
+799:    in $t2
+800:    move $t1, $t2
+801:    str $t1, $sp, 1
+802:    load $t3, $sp, 2
+803:    in $t4
+804:    move $t3, $t4
+805:    str $t3, $sp, 2
+806:    load $t5, $sp, 4
+807:    in $t6
+808:    move $t5, $t6
+809:    str $t5, $sp, 4
+810:    load $t7, $sp, 1
+811:    move $a0, $t7
+812:    load $t8, $sp, 2
+813:    move $a1, $t8
+814:    load $t9, $sp, 4
+815:    move $a2, $t9
+816:    addi $sp, $sp, 5
+817:    ldi $jmp, 821
+818:    str $jmp, $ra, 0
+819:    addi $ra, $ra, 1
+820:    jmp 266
+821:    move $t10, $ret
+822:    addi $sp, $sp, -5
+823:    move $a0, $t10
+824:    move $t11, $a0
+825:    out $t11
+826:    nop
+827:    jmp 972
+.L52
+828:    load $t12, $sp, 0
+829:    ldi $t13, 7
+830:    sge $t14, $t12, $t13
+831:    sle $t15, $t12, $t13
+832:    and $t0, $t14, $t15
+833:    beq $t0, $zero, 871
+834:    load $t1, $sp, 3
+835:    ldi $t2, 0
+836:    move $t1, $t2
+837:    str $t1, $sp, 3
+.L53
+838:    load $t3, $sp, 3
+839:    ldi $t4, 4
+840:    slt $t5, $t3, $t4
+841:    beq $t5, $zero, 855
+842:    load $t7, $sp, 3
+843:    add $t7, $t7, $gp
+844:    load $t6, $t7, 0
+845:    in $t8
+846:    move $t6, $t8
+847:    str $t6, $t7, 0
+848:    load $t9, $sp, 3
+849:    load $t10, $sp, 3
+850:    ldi $t11, 1
+851:    add $t12, $t10, $t11
+852:    move $t9, $t12
+853:    str $t9, $sp, 3
+854:    jmp 838
+.L54
+855:    addi $t13, $gp, 0
+856:    move $a0, $t13
+857:    ldi $t14, 4
+858:    move $a1, $t14
+859:    addi $sp, $sp, 5
+860:    ldi $jmp, 864
+861:    str $jmp, $ra, 0
+862:    addi $ra, $ra, 1
+863:    jmp 350
+864:    move $t15, $ret
+865:    addi $sp, $sp, -5
+866:    move $a0, $t15
+867:    move $t0, $a0
+868:    out $t0
+869:    nop
+870:    jmp 971
+.L55
+871:    load $t1, $sp, 0
+872:    ldi $t2, 8
+873:    sge $t3, $t1, $t2
+874:    sle $t4, $t1, $t2
+875:    and $t5, $t3, $t4
+876:    beq $t5, $zero, 895
+877:    load $t6, $sp, 1
+878:    in $t7
+879:    move $t6, $t7
+880:    str $t6, $sp, 1
+881:    load $t8, $sp, 1
+882:    move $a0, $t8
+883:    addi $sp, $sp, 5
+884:    ldi $jmp, 888
+885:    str $jmp, $ra, 0
+886:    addi $ra, $ra, 1
+887:    jmp 390
+888:    move $t9, $ret
+889:    addi $sp, $sp, -5
+890:    move $a0, $t9
+891:    move $t10, $a0
+892:    out $t10
+893:    nop
+894:    jmp 970
+.L56
+895:    load $t11, $sp, 0
+896:    ldi $t12, 9
+897:    sge $t13, $t11, $t12
+898:    sle $t14, $t11, $t12
+899:    and $t15, $t13, $t14
+900:    beq $t15, $zero, 925
+901:    load $t0, $sp, 1
+902:    in $t1
+903:    move $t0, $t1
+904:    str $t0, $sp, 1
+905:    load $t2, $sp, 2
+906:    in $t3
+907:    move $t2, $t3
+908:    str $t2, $sp, 2
+909:    load $t4, $sp, 1
+910:    move $a0, $t4
+911:    load $t5, $sp, 2
+912:    move $a1, $t5
+913:    addi $sp, $sp, 5
+914:    ldi $jmp, 918
+915:    str $jmp, $ra, 0
+916:    addi $ra, $ra, 1
+917:    jmp 571
+918:    move $t6, $ret
+919:    addi $sp, $sp, -5
+920:    move $a0, $t6
+921:    move $t7, $a0
+922:    out $t7
+923:    nop
+924:    jmp 969
+.L57
+925:    load $t8, $sp, 0
+926:    ldi $t9, 10
+927:    sge $t10, $t8, $t9
+928:    sle $t11, $t8, $t9
+929:    and $t12, $t10, $t11
+930:    beq $t12, $zero, 968
+931:    load $t13, $sp, 3
+932:    ldi $t14, 0
+933:    move $t13, $t14
+934:    str $t13, $sp, 3
+.L58
+935:    load $t15, $sp, 3
+936:    ldi $t0, 4
+937:    slt $t1, $t15, $t0
+938:    beq $t1, $zero, 952
+939:    load $t3, $sp, 3
+940:    add $t3, $t3, $gp
+941:    load $t2, $t3, 0
+942:    in $t4
+943:    move $t2, $t4
+944:    str $t2, $t3, 0
+945:    load $t5, $sp, 3
+946:    load $t6, $sp, 3
+947:    ldi $t7, 1
+948:    add $t8, $t6, $t7
+949:    move $t5, $t8
+950:    str $t5, $sp, 3
+951:    jmp 935
+.L59
+952:    addi $t9, $gp, 0
+953:    move $a0, $t9
+954:    ldi $t10, 4
+955:    move $a1, $t10
+956:    addi $sp, $sp, 5
+957:    ldi $jmp, 961
+958:    str $jmp, $ra, 0
+959:    addi $ra, $ra, 1
+960:    jmp 509
+961:    move $t11, $ret
+962:    addi $sp, $sp, -5
+963:    move $a0, $t11
+964:    move $t12, $a0
+965:    out $t12
+966:    nop
+967:    jmp 968
+.L60
+.L61
+968:    jmp 969
+.L62
+969:    jmp 970
+.L63
+970:    jmp 971
+.L64
+971:    jmp 972
+.L65
+972:    jmp 973
+.L66
+973:    jmp 974
+.L67
+974:    jmp 975
+.L68
+975:    jmp 976
+.L69
+976:    jmp 977
+.L70
+977:    jmp 617
+.L71
+978:    load $t13, $sp, 0
+979:    in $t14
+980:    move $t13, $t14
+981:    str $t13, $sp, 0
+982:    jmp 983
+.end
+983:    halt
+
+/**************Código em Binário Gerado************/
+
+instrmem[0] = 32'b001100_00000_11011_0000000000000000;// ldi
+instrmem[1] = 32'b001100_00000_11100_0000000000100000;// ldi
+instrmem[2] = 32'b001100_00000_11101_0000000000101111;// ldi
+instrmem[3] = 32'b010000_00000000000000001001100101;// jmp
+//minloc
+instrmem[4] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[5] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[6] = 32'b001101_11011_10011_0000000000000010;// str
+instrmem[7] = 32'b001011_11011_00001_0000000000000101;// load
+instrmem[8] = 32'b001011_11011_00010_0000000000000001;// load
+instrmem[9] = 32'b010110_00010_00000_00001_00000000000;// move
+instrmem[10] = 32'b001101_11011_00001_0000000000000101;// str
+instrmem[11] = 32'b001011_11011_00011_0000000000000100;// load
+instrmem[12] = 32'b001011_11011_00101_0000000000000001;// load
+instrmem[13] = 32'b001011_11011_00100_0000000000000000;// load
+instrmem[14] = 32'b000000_00101_00100_00101_00000000000;// add
+instrmem[15] = 32'b001011_00101_00100_0000000000000000;// load
+instrmem[16] = 32'b010110_00100_00000_00011_00000000000;// move
+instrmem[17] = 32'b001101_11011_00011_0000000000000100;// str
+instrmem[18] = 32'b001011_11011_00110_0000000000000011;// load
+instrmem[19] = 32'b001011_11011_00111_0000000000000001;// load
+instrmem[20] = 32'b001100_00000_01000_0000000000000001;// ldi
+instrmem[21] = 32'b000000_00111_01000_01001_00000000000;// add
+instrmem[22] = 32'b010110_01001_00000_00110_00000000000;// move
+instrmem[23] = 32'b001101_11011_00110_0000000000000011;// str
+//L0
+instrmem[24] = 32'b001011_11011_01010_0000000000000011;// load
+instrmem[25] = 32'b001011_11011_01011_0000000000000010;// load
+instrmem[26] = 32'b000110_01010_01011_01100_00000000000;// slt
+instrmem[27] = 32'b001110_01100_00000_0000000000110110;// beq
+instrmem[28] = 32'b001011_11011_01110_0000000000000011;// load
+instrmem[29] = 32'b001011_11011_01101_0000000000000000;// load
+instrmem[30] = 32'b000000_01110_01101_01110_00000000000;// add
+instrmem[31] = 32'b001011_01110_01101_0000000000000000;// load
+instrmem[32] = 32'b001011_11011_01111_0000000000000100;// load
+instrmem[33] = 32'b000110_01101_01111_10000_00000000000;// slt
+instrmem[34] = 32'b001110_10000_00000_0000000000101111;// beq
+instrmem[35] = 32'b001011_11011_00001_0000000000000100;// load
+instrmem[36] = 32'b001011_11011_00011_0000000000000011;// load
+instrmem[37] = 32'b001011_11011_00010_0000000000000000;// load
+instrmem[38] = 32'b000000_00011_00010_00011_00000000000;// add
+instrmem[39] = 32'b001011_00011_00010_0000000000000000;// load
+instrmem[40] = 32'b010110_00010_00000_00001_00000000000;// move
+instrmem[41] = 32'b001101_11011_00001_0000000000000100;// str
+instrmem[42] = 32'b001011_11011_00100_0000000000000101;// load
+instrmem[43] = 32'b001011_11011_00101_0000000000000011;// load
+instrmem[44] = 32'b010110_00101_00000_00100_00000000000;// move
+instrmem[45] = 32'b001101_11011_00100_0000000000000101;// str
+instrmem[46] = 32'b010000_00000000000000000000101111;// jmp
+//L1
+//L2
+instrmem[47] = 32'b001011_11011_00110_0000000000000011;// load
+instrmem[48] = 32'b001011_11011_00111_0000000000000011;// load
+instrmem[49] = 32'b001100_00000_01000_0000000000000001;// ldi
+instrmem[50] = 32'b000000_00111_01000_01001_00000000000;// add
+instrmem[51] = 32'b010110_01001_00000_00110_00000000000;// move
+instrmem[52] = 32'b001101_11011_00110_0000000000000011;// str
+instrmem[53] = 32'b010000_00000000000000000000011000;// jmp
+//L3
+instrmem[54] = 32'b001011_11011_01010_0000000000000101;// load
+instrmem[55] = 32'b010110_01010_00000_11110_00000000000;// move
+instrmem[56] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[57] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[58] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[59] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[60] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[61] = 32'b010001_11111_00000_0000000000000000;// jr
+//sort
+instrmem[62] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[63] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[64] = 32'b001101_11011_10011_0000000000000010;// str
+instrmem[65] = 32'b001011_11011_01011_0000000000000011;// load
+instrmem[66] = 32'b001011_11011_01100_0000000000000001;// load
+instrmem[67] = 32'b010110_01100_00000_01011_00000000000;// move
+instrmem[68] = 32'b001101_11011_01011_0000000000000011;// str
+//L4
+instrmem[69] = 32'b001011_11011_01101_0000000000000011;// load
+instrmem[70] = 32'b001011_11011_01110_0000000000000010;// load
+instrmem[71] = 32'b001100_00000_01111_0000000000000001;// ldi
+instrmem[72] = 32'b000001_01110_01111_10000_00000000000;// sub
+instrmem[73] = 32'b000110_01101_10000_00001_00000000000;// slt
+instrmem[74] = 32'b001110_00001_00000_0000000001111010;// beq
+instrmem[75] = 32'b001011_11011_00010_0000000000000100;// load
+instrmem[76] = 32'b001011_11011_00011_0000000000000000;// load
+instrmem[77] = 32'b010110_00011_00000_10001_00000000000;// move
+instrmem[78] = 32'b001011_11011_00100_0000000000000011;// load
+instrmem[79] = 32'b010110_00100_00000_10010_00000000000;// move
+instrmem[80] = 32'b001011_11011_00101_0000000000000010;// load
+instrmem[81] = 32'b010110_00101_00000_10011_00000000000;// move
+instrmem[82] = 32'b000010_11011_11011_0000000000000110;// addi
+instrmem[83] = 32'b001100_00000_11111_0000000001010111;// ldi
+instrmem[84] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[85] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[86] = 32'b010000_00000000000000000000000100;// jmp
+instrmem[87] = 32'b010110_11110_00000_00110_00000000000;// move
+instrmem[88] = 32'b000010_11011_11011_1111111111111010;// addi
+instrmem[89] = 32'b010110_00110_00000_00010_00000000000;// move
+instrmem[90] = 32'b001101_11011_00010_0000000000000100;// str
+instrmem[91] = 32'b001011_11011_00111_0000000000000101;// load
+instrmem[92] = 32'b001011_11011_01001_0000000000000100;// load
+instrmem[93] = 32'b001011_11011_01000_0000000000000000;// load
+instrmem[94] = 32'b000000_01001_01000_01001_00000000000;// add
+instrmem[95] = 32'b001011_01001_01000_0000000000000000;// load
+instrmem[96] = 32'b010110_01000_00000_00111_00000000000;// move
+instrmem[97] = 32'b001101_11011_00111_0000000000000101;// str
+instrmem[98] = 32'b001011_11011_01011_0000000000000100;// load
+instrmem[99] = 32'b001011_11011_01010_0000000000000000;// load
+instrmem[100] = 32'b000000_01011_01010_01011_00000000000;// add
+instrmem[101] = 32'b001011_01011_01010_0000000000000000;// load
+instrmem[102] = 32'b001011_11011_01101_0000000000000011;// load
+instrmem[103] = 32'b001011_11011_01100_0000000000000000;// load
+instrmem[104] = 32'b000000_01101_01100_01101_00000000000;// add
+instrmem[105] = 32'b001011_01101_01100_0000000000000000;// load
+instrmem[106] = 32'b010110_01100_00000_01010_00000000000;// move
+instrmem[107] = 32'b001101_01011_01010_0000000000000000;// str
+instrmem[108] = 32'b001011_11011_01111_0000000000000011;// load
+instrmem[109] = 32'b001011_11011_01110_0000000000000000;// load
+instrmem[110] = 32'b000000_01111_01110_01111_00000000000;// add
+instrmem[111] = 32'b001011_01111_01110_0000000000000000;// load
+instrmem[112] = 32'b001011_11011_10000_0000000000000101;// load
+instrmem[113] = 32'b010110_10000_00000_01110_00000000000;// move
+instrmem[114] = 32'b001101_01111_01110_0000000000000000;// str
+instrmem[115] = 32'b001011_11011_00001_0000000000000011;// load
+instrmem[116] = 32'b001011_11011_00010_0000000000000011;// load
+instrmem[117] = 32'b001100_00000_00011_0000000000000001;// ldi
+instrmem[118] = 32'b000000_00010_00011_00100_00000000000;// add
+instrmem[119] = 32'b010110_00100_00000_00001_00000000000;// move
+instrmem[120] = 32'b001101_11011_00001_0000000000000011;// str
+instrmem[121] = 32'b010000_00000000000000000001000101;// jmp
+//L5
+instrmem[122] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[123] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[124] = 32'b010001_11111_00000_0000000000000000;// jr
+//gcd
+instrmem[125] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[126] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[127] = 32'b001011_11011_00101_0000000000000001;// load
+instrmem[128] = 32'b001100_00000_00110_0000000000000000;// ldi
+instrmem[129] = 32'b011010_00101_00110_00111_00000000000;// sge
+instrmem[130] = 32'b011001_00101_00110_01000_00000000000;// sle
+instrmem[131] = 32'b001000_00111_01000_01001_00000000000;// and
+instrmem[132] = 32'b001110_01001_00000_0000000010001011;// beq
+instrmem[133] = 32'b001011_11011_01010_0000000000000000;// load
+instrmem[134] = 32'b010110_01010_00000_11110_00000000000;// move
+instrmem[135] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[136] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[137] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[138] = 32'b010000_00000000000000000010100001;// jmp
+//L6
+instrmem[139] = 32'b001011_11011_01011_0000000000000001;// load
+instrmem[140] = 32'b010110_01011_00000_10001_00000000000;// move
+instrmem[141] = 32'b001011_11011_01100_0000000000000000;// load
+instrmem[142] = 32'b001011_11011_01101_0000000000000000;// load
+instrmem[143] = 32'b001011_11011_01110_0000000000000001;// load
+instrmem[144] = 32'b000101_01101_01110_01111_00000000000;// divi
+instrmem[145] = 32'b001011_11011_10000_0000000000000001;// load
+instrmem[146] = 32'b000100_01111_10000_00001_00000000000;// mult
+instrmem[147] = 32'b000001_01100_00001_00010_00000000000;// sub
+instrmem[148] = 32'b010110_00010_00000_10010_00000000000;// move
+instrmem[149] = 32'b000010_11011_11011_0000000000000010;// addi
+instrmem[150] = 32'b001100_00000_11111_0000000010011010;// ldi
+instrmem[151] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[152] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[153] = 32'b010000_00000000000000000001111101;// jmp
+instrmem[154] = 32'b010110_11110_00000_00011_00000000000;// move
+instrmem[155] = 32'b000010_11011_11011_1111111111111110;// addi
+instrmem[156] = 32'b010110_00011_00000_11110_00000000000;// move
+instrmem[157] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[158] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[159] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[160] = 32'b010000_00000000000000000010100001;// jmp
+//L7
+instrmem[161] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[162] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[163] = 32'b010001_11111_00000_0000000000000000;// jr
+//fatorial
+instrmem[164] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[165] = 32'b001011_11011_00100_0000000000000000;// load
+instrmem[166] = 32'b001100_00000_00101_0000000000000010;// ldi
+instrmem[167] = 32'b000110_00100_00101_00110_00000000000;// slt
+instrmem[168] = 32'b001110_00110_00000_0000000010101111;// beq
+instrmem[169] = 32'b001100_00000_00111_0000000000000001;// ldi
+instrmem[170] = 32'b010110_00111_00000_11110_00000000000;// move
+instrmem[171] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[172] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[173] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[174] = 32'b010000_00000000000000000011000001;// jmp
+//L8
+instrmem[175] = 32'b001011_11011_01000_0000000000000000;// load
+instrmem[176] = 32'b001100_00000_01001_0000000000000001;// ldi
+instrmem[177] = 32'b000001_01000_01001_01010_00000000000;// sub
+instrmem[178] = 32'b010110_01010_00000_10001_00000000000;// move
+instrmem[179] = 32'b000010_11011_11011_0000000000000001;// addi
+instrmem[180] = 32'b001100_00000_11111_0000000010111000;// ldi
+instrmem[181] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[182] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[183] = 32'b010000_00000000000000000010100100;// jmp
+instrmem[184] = 32'b010110_11110_00000_01011_00000000000;// move
+instrmem[185] = 32'b000010_11011_11011_1111111111111111;// addi
+instrmem[186] = 32'b001011_11011_01100_0000000000000000;// load
+instrmem[187] = 32'b000100_01011_01100_01101_00000000000;// mult
+instrmem[188] = 32'b010110_01101_00000_11110_00000000000;// move
+instrmem[189] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[190] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[191] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[192] = 32'b010000_00000000000000000011000001;// jmp
+//L9
+instrmem[193] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[194] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[195] = 32'b010001_11111_00000_0000000000000000;// jr
+//fibonacci
+instrmem[196] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[197] = 32'b001011_11011_01110_0000000000000000;// load
+instrmem[198] = 32'b001100_00000_01111_0000000000000000;// ldi
+instrmem[199] = 32'b011001_01110_01111_10000_00000000000;// sle
+instrmem[200] = 32'b001110_10000_00000_0000000011001111;// beq
+instrmem[201] = 32'b001100_00000_00001_0000000000000000;// ldi
+instrmem[202] = 32'b010110_00001_00000_11110_00000000000;// move
+instrmem[203] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[204] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[205] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[206] = 32'b010000_00000000000000000100000111;// jmp
+//L10
+instrmem[207] = 32'b001011_11011_00010_0000000000000000;// load
+instrmem[208] = 32'b001100_00000_00011_0000000000000001;// ldi
+instrmem[209] = 32'b011010_00010_00011_00100_00000000000;// sge
+instrmem[210] = 32'b011001_00010_00011_00101_00000000000;// sle
+instrmem[211] = 32'b001000_00100_00101_00110_00000000000;// and
+instrmem[212] = 32'b001110_00110_00000_0000000011011011;// beq
+instrmem[213] = 32'b001100_00000_00111_0000000000000001;// ldi
+instrmem[214] = 32'b010110_00111_00000_11110_00000000000;// move
+instrmem[215] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[216] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[217] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[218] = 32'b010000_00000000000000000100000110;// jmp
+//L11
+instrmem[219] = 32'b001011_11011_01000_0000000000000001;// load
+instrmem[220] = 32'b001100_00000_01001_0000000000000000;// ldi
+instrmem[221] = 32'b010110_01001_00000_01000_00000000000;// move
+instrmem[222] = 32'b001101_11011_01000_0000000000000001;// str
+instrmem[223] = 32'b001011_11011_01010_0000000000000010;// load
+instrmem[224] = 32'b001100_00000_01011_0000000000000001;// ldi
+instrmem[225] = 32'b010110_01011_00000_01010_00000000000;// move
+instrmem[226] = 32'b001101_11011_01010_0000000000000010;// str
+instrmem[227] = 32'b001011_11011_01100_0000000000000100;// load
+instrmem[228] = 32'b001100_00000_01101_0000000000000001;// ldi
+instrmem[229] = 32'b010110_01101_00000_01100_00000000000;// move
+instrmem[230] = 32'b001101_11011_01100_0000000000000100;// str
+//L12
+instrmem[231] = 32'b001011_11011_01110_0000000000000100;// load
+instrmem[232] = 32'b001011_11011_01111_0000000000000000;// load
+instrmem[233] = 32'b000110_01110_01111_10000_00000000000;// slt
+instrmem[234] = 32'b001110_10000_00000_0000000100000000;// beq
+instrmem[235] = 32'b001011_11011_00001_0000000000000011;// load
+instrmem[236] = 32'b001011_11011_00010_0000000000000010;// load
+instrmem[237] = 32'b010110_00010_00000_00001_00000000000;// move
+instrmem[238] = 32'b001101_11011_00001_0000000000000011;// str
+instrmem[239] = 32'b001011_11011_00011_0000000000000010;// load
+instrmem[240] = 32'b001011_11011_00100_0000000000000010;// load
+instrmem[241] = 32'b001011_11011_00101_0000000000000001;// load
+instrmem[242] = 32'b000000_00100_00101_00110_00000000000;// add
+instrmem[243] = 32'b010110_00110_00000_00011_00000000000;// move
+instrmem[244] = 32'b001101_11011_00011_0000000000000010;// str
+instrmem[245] = 32'b001011_11011_00111_0000000000000001;// load
+instrmem[246] = 32'b001011_11011_01000_0000000000000011;// load
+instrmem[247] = 32'b010110_01000_00000_00111_00000000000;// move
+instrmem[248] = 32'b001101_11011_00111_0000000000000001;// str
+instrmem[249] = 32'b001011_11011_01001_0000000000000100;// load
+instrmem[250] = 32'b001011_11011_01010_0000000000000100;// load
+instrmem[251] = 32'b001100_00000_01011_0000000000000001;// ldi
+instrmem[252] = 32'b000000_01010_01011_01100_00000000000;// add
+instrmem[253] = 32'b010110_01100_00000_01001_00000000000;// move
+instrmem[254] = 32'b001101_11011_01001_0000000000000100;// str
+instrmem[255] = 32'b010000_00000000000000000011100111;// jmp
+//L13
+instrmem[256] = 32'b001011_11011_01101_0000000000000010;// load
+instrmem[257] = 32'b010110_01101_00000_11110_00000000000;// move
+instrmem[258] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[259] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[260] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[261] = 32'b010000_00000000000000000100000110;// jmp
+//L14
+instrmem[262] = 32'b010000_00000000000000000100000111;// jmp
+//L15
+instrmem[263] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[264] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[265] = 32'b010001_11111_00000_0000000000000000;// jr
+//calculadora
+instrmem[266] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[267] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[268] = 32'b001101_11011_10011_0000000000000010;// str
+instrmem[269] = 32'b001011_11011_01110_0000000000000010;// load
+instrmem[270] = 32'b001100_00000_01111_0000000000000001;// ldi
+instrmem[271] = 32'b011010_01110_01111_10000_00000000000;// sge
+instrmem[272] = 32'b011001_01110_01111_00001_00000000000;// sle
+instrmem[273] = 32'b001000_10000_00001_00010_00000000000;// and
+instrmem[274] = 32'b001110_00010_00000_0000000100011011;// beq
+instrmem[275] = 32'b001011_11011_00011_0000000000000000;// load
+instrmem[276] = 32'b001011_11011_00100_0000000000000001;// load
+instrmem[277] = 32'b000000_00011_00100_00101_00000000000;// add
+instrmem[278] = 32'b010110_00101_00000_11110_00000000000;// move
+instrmem[279] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[280] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[281] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[282] = 32'b010000_00000000000000000101011011;// jmp
+//L16
+instrmem[283] = 32'b001011_11011_00110_0000000000000010;// load
+instrmem[284] = 32'b001100_00000_00111_0000000000000010;// ldi
+instrmem[285] = 32'b011010_00110_00111_01000_00000000000;// sge
+instrmem[286] = 32'b011001_00110_00111_01001_00000000000;// sle
+instrmem[287] = 32'b001000_01000_01001_01010_00000000000;// and
+instrmem[288] = 32'b001110_01010_00000_0000000100101001;// beq
+instrmem[289] = 32'b001011_11011_01011_0000000000000000;// load
+instrmem[290] = 32'b001011_11011_01100_0000000000000001;// load
+instrmem[291] = 32'b000001_01011_01100_01101_00000000000;// sub
+instrmem[292] = 32'b010110_01101_00000_11110_00000000000;// move
+instrmem[293] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[294] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[295] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[296] = 32'b010000_00000000000000000101011010;// jmp
+//L17
+instrmem[297] = 32'b001011_11011_01110_0000000000000010;// load
+instrmem[298] = 32'b001100_00000_01111_0000000000000011;// ldi
+instrmem[299] = 32'b011010_01110_01111_10000_00000000000;// sge
+instrmem[300] = 32'b011001_01110_01111_00001_00000000000;// sle
+instrmem[301] = 32'b001000_10000_00001_00010_00000000000;// and
+instrmem[302] = 32'b001110_00010_00000_0000000100110111;// beq
+instrmem[303] = 32'b001011_11011_00011_0000000000000000;// load
+instrmem[304] = 32'b001011_11011_00100_0000000000000001;// load
+instrmem[305] = 32'b000100_00011_00100_00101_00000000000;// mult
+instrmem[306] = 32'b010110_00101_00000_11110_00000000000;// move
+instrmem[307] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[308] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[309] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[310] = 32'b010000_00000000000000000101011001;// jmp
+//L18
+instrmem[311] = 32'b001011_11011_00110_0000000000000010;// load
+instrmem[312] = 32'b001100_00000_00111_0000000000000100;// ldi
+instrmem[313] = 32'b011010_00110_00111_01000_00000000000;// sge
+instrmem[314] = 32'b011001_00110_00111_01001_00000000000;// sle
+instrmem[315] = 32'b001000_01000_01001_01010_00000000000;// and
+instrmem[316] = 32'b001110_01010_00000_0000000101000101;// beq
+instrmem[317] = 32'b001011_11011_01011_0000000000000000;// load
+instrmem[318] = 32'b001011_11011_01100_0000000000000001;// load
+instrmem[319] = 32'b000101_01011_01100_01101_00000000000;// divi
+instrmem[320] = 32'b010110_01101_00000_11110_00000000000;// move
+instrmem[321] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[322] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[323] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[324] = 32'b010000_00000000000000000101011000;// jmp
+//L19
+instrmem[325] = 32'b001011_11011_01110_0000000000000010;// load
+instrmem[326] = 32'b001100_00000_01111_0000000000000101;// ldi
+instrmem[327] = 32'b011010_01110_01111_10000_00000000000;// sge
+instrmem[328] = 32'b011001_01110_01111_00001_00000000000;// sle
+instrmem[329] = 32'b001000_10000_00001_00010_00000000000;// and
+instrmem[330] = 32'b001110_00010_00000_0000000101010111;// beq
+instrmem[331] = 32'b001011_11011_00011_0000000000000000;// load
+instrmem[332] = 32'b001011_11011_00100_0000000000000000;// load
+instrmem[333] = 32'b001011_11011_00101_0000000000000001;// load
+instrmem[334] = 32'b000101_00100_00101_00110_00000000000;// divi
+instrmem[335] = 32'b001011_11011_00111_0000000000000001;// load
+instrmem[336] = 32'b000100_00110_00111_01000_00000000000;// mult
+instrmem[337] = 32'b000001_00011_01000_01001_00000000000;// sub
+instrmem[338] = 32'b010110_01001_00000_11110_00000000000;// move
+instrmem[339] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[340] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[341] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[342] = 32'b010000_00000000000000000101010111;// jmp
+//L20
+//L21
+instrmem[343] = 32'b010000_00000000000000000101011000;// jmp
+//L22
+instrmem[344] = 32'b010000_00000000000000000101011001;// jmp
+//L23
+instrmem[345] = 32'b010000_00000000000000000101011010;// jmp
+//L24
+instrmem[346] = 32'b010000_00000000000000000101011011;// jmp
+//L25
+instrmem[347] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[348] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[349] = 32'b010001_11111_00000_0000000000000000;// jr
+//mediaVector
+instrmem[350] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[351] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[352] = 32'b001011_11011_01010_0000000000000010;// load
+instrmem[353] = 32'b001100_00000_01011_0000000000000000;// ldi
+instrmem[354] = 32'b010110_01011_00000_01010_00000000000;// move
+instrmem[355] = 32'b001101_11011_01010_0000000000000010;// str
+instrmem[356] = 32'b001011_11011_01100_0000000000000011;// load
+instrmem[357] = 32'b001100_00000_01101_0000000000000000;// ldi
+instrmem[358] = 32'b010110_01101_00000_01100_00000000000;// move
+instrmem[359] = 32'b001101_11011_01100_0000000000000011;// str
+//L26
+instrmem[360] = 32'b001011_11011_01110_0000000000000010;// load
+instrmem[361] = 32'b001011_11011_01111_0000000000000001;// load
+instrmem[362] = 32'b000110_01110_01111_10000_00000000000;// slt
+instrmem[363] = 32'b001110_10000_00000_0000000101111100;// beq
+instrmem[364] = 32'b001011_11011_00001_0000000000000011;// load
+instrmem[365] = 32'b001011_11011_00010_0000000000000011;// load
+instrmem[366] = 32'b001011_11011_00100_0000000000000010;// load
+instrmem[367] = 32'b001011_11011_00011_0000000000000000;// load
+instrmem[368] = 32'b000000_00100_00011_00100_00000000000;// add
+instrmem[369] = 32'b001011_00100_00011_0000000000000000;// load
+instrmem[370] = 32'b000000_00010_00011_00101_00000000000;// add
+instrmem[371] = 32'b010110_00101_00000_00001_00000000000;// move
+instrmem[372] = 32'b001101_11011_00001_0000000000000011;// str
+instrmem[373] = 32'b001011_11011_00110_0000000000000010;// load
+instrmem[374] = 32'b001011_11011_00111_0000000000000010;// load
+instrmem[375] = 32'b001100_00000_01000_0000000000000001;// ldi
+instrmem[376] = 32'b000000_00111_01000_01001_00000000000;// add
+instrmem[377] = 32'b010110_01001_00000_00110_00000000000;// move
+instrmem[378] = 32'b001101_11011_00110_0000000000000010;// str
+instrmem[379] = 32'b010000_00000000000000000101101000;// jmp
+//L27
+instrmem[380] = 32'b001011_11011_01010_0000000000000011;// load
+instrmem[381] = 32'b001011_11011_01011_0000000000000001;// load
+instrmem[382] = 32'b000101_01010_01011_01100_00000000000;// divi
+instrmem[383] = 32'b010110_01100_00000_11110_00000000000;// move
+instrmem[384] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[385] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[386] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[387] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[388] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[389] = 32'b010001_11111_00000_0000000000000000;// jr
+//parimpar
+instrmem[390] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[391] = 32'b001011_11011_01101_0000000000000000;// load
+instrmem[392] = 32'b001011_11011_01110_0000000000000000;// load
+instrmem[393] = 32'b001100_00000_01111_0000000000000010;// ldi
+instrmem[394] = 32'b000101_01110_01111_10000_00000000000;// divi
+instrmem[395] = 32'b001100_00000_00001_0000000000000010;// ldi
+instrmem[396] = 32'b000100_10000_00001_00010_00000000000;// mult
+instrmem[397] = 32'b000001_01101_00010_00011_00000000000;// sub
+instrmem[398] = 32'b001100_00000_00100_0000000000000000;// ldi
+instrmem[399] = 32'b011010_00011_00100_00101_00000000000;// sge
+instrmem[400] = 32'b011001_00011_00100_00110_00000000000;// sle
+instrmem[401] = 32'b001000_00101_00110_00111_00000000000;// and
+instrmem[402] = 32'b001110_00111_00000_0000000110011001;// beq
+instrmem[403] = 32'b001100_00000_01000_0000000000000001;// ldi
+instrmem[404] = 32'b010110_01000_00000_11110_00000000000;// move
+instrmem[405] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[406] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[407] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[408] = 32'b010000_00000000000000000110011111;// jmp
+//L28
+instrmem[409] = 32'b001100_00000_01001_0000000000000000;// ldi
+instrmem[410] = 32'b010110_01001_00000_11110_00000000000;// move
+instrmem[411] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[412] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[413] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[414] = 32'b010000_00000000000000000110011111;// jmp
+//L29
+instrmem[415] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[416] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[417] = 32'b010001_11111_00000_0000000000000000;// jr
+//somavetor
+instrmem[418] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[419] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[420] = 32'b001101_11011_10011_0000000000000010;// str
+instrmem[421] = 32'b001011_11011_01010_0000000000000011;// load
+instrmem[422] = 32'b001100_00000_01011_0000000000000000;// ldi
+instrmem[423] = 32'b010110_01011_00000_01010_00000000000;// move
+instrmem[424] = 32'b001101_11011_01010_0000000000000011;// str
+//L30
+instrmem[425] = 32'b001011_11011_01100_0000000000000011;// load
+instrmem[426] = 32'b001011_11011_01101_0000000000000010;// load
+instrmem[427] = 32'b000110_01100_01101_01110_00000000000;// slt
+instrmem[428] = 32'b001110_01110_00000_0000000111000011;// beq
+instrmem[429] = 32'b001011_11011_10000_0000000000000011;// load
+instrmem[430] = 32'b001011_11011_01111_0000000000000000;// load
+instrmem[431] = 32'b000000_10000_01111_10000_00000000000;// add
+instrmem[432] = 32'b001011_10000_01111_0000000000000000;// load
+instrmem[433] = 32'b001011_11011_00010_0000000000000011;// load
+instrmem[434] = 32'b001011_11011_00001_0000000000000000;// load
+instrmem[435] = 32'b000000_00010_00001_00010_00000000000;// add
+instrmem[436] = 32'b001011_00010_00001_0000000000000000;// load
+instrmem[437] = 32'b001011_11011_00100_0000000000000011;// load
+instrmem[438] = 32'b001011_11011_00011_0000000000000001;// load
+instrmem[439] = 32'b000000_00100_00011_00100_00000000000;// add
+instrmem[440] = 32'b001011_00100_00011_0000000000000000;// load
+instrmem[441] = 32'b000000_00001_00011_00101_00000000000;// add
+instrmem[442] = 32'b010110_00101_00000_01111_00000000000;// move
+instrmem[443] = 32'b001101_10000_01111_0000000000000000;// str
+instrmem[444] = 32'b001011_11011_00110_0000000000000011;// load
+instrmem[445] = 32'b001011_11011_00111_0000000000000011;// load
+instrmem[446] = 32'b001100_00000_01000_0000000000000001;// ldi
+instrmem[447] = 32'b000000_00111_01000_01001_00000000000;// add
+instrmem[448] = 32'b010110_01001_00000_00110_00000000000;// move
+instrmem[449] = 32'b001101_11011_00110_0000000000000011;// str
+instrmem[450] = 32'b010000_00000000000000000110101001;// jmp
+//L31
+instrmem[451] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[452] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[453] = 32'b010001_11111_00000_0000000000000000;// jr
+//outputvec
+instrmem[454] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[455] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[456] = 32'b001011_11011_01010_0000000000000010;// load
+instrmem[457] = 32'b001100_00000_01011_0000000000000000;// ldi
+instrmem[458] = 32'b010110_01011_00000_01010_00000000000;// move
+instrmem[459] = 32'b001101_11011_01010_0000000000000010;// str
+//L32
+instrmem[460] = 32'b001011_11011_01100_0000000000000010;// load
+instrmem[461] = 32'b001011_11011_01101_0000000000000001;// load
+instrmem[462] = 32'b000110_01100_01101_01110_00000000000;// slt
+instrmem[463] = 32'b001110_01110_00000_0000000111011111;// beq
+instrmem[464] = 32'b001011_11011_10000_0000000000000010;// load
+instrmem[465] = 32'b001011_11011_01111_0000000000000000;// load
+instrmem[466] = 32'b000000_10000_01111_10000_00000000000;// add
+instrmem[467] = 32'b001011_10000_01111_0000000000000000;// load
+instrmem[468] = 32'b010110_01111_00000_10001_00000000000;// move
+instrmem[469] = 32'b010110_10011_00000_00001_00000000000;// move
+instrmem[470] = 32'b010101_00001_00000_0000000000000000;// out
+instrmem[471] = 32'b010010_00000000000000000000000000;// nop
+instrmem[472] = 32'b001011_11011_00010_0000000000000010;// load
+instrmem[473] = 32'b001011_11011_00011_0000000000000010;// load
+instrmem[474] = 32'b001100_00000_00100_0000000000000001;// ldi
+instrmem[475] = 32'b000000_00011_00100_00101_00000000000;// add
+instrmem[476] = 32'b010110_00101_00000_00010_00000000000;// move
+instrmem[477] = 32'b001101_11011_00010_0000000000000010;// str
+instrmem[478] = 32'b010000_00000000000000000111001100;// jmp
+//L33
+instrmem[479] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[480] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[481] = 32'b010001_11111_00000_0000000000000000;// jr
+//inputvector
+instrmem[482] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[483] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[484] = 32'b001011_11011_00110_0000000000000010;// load
+instrmem[485] = 32'b001100_00000_00111_0000000000000000;// ldi
+instrmem[486] = 32'b010110_00111_00000_00110_00000000000;// move
+instrmem[487] = 32'b001101_11011_00110_0000000000000010;// str
+//L34
+instrmem[488] = 32'b001011_11011_01000_0000000000000010;// load
+instrmem[489] = 32'b001011_11011_01001_0000000000000001;// load
+instrmem[490] = 32'b000110_01000_01001_01010_00000000000;// slt
+instrmem[491] = 32'b001110_01010_00000_0000000111111010;// beq
+instrmem[492] = 32'b001011_11011_01100_0000000000000010;// load
+instrmem[493] = 32'b001011_11011_01011_0000000000000000;// load
+instrmem[494] = 32'b000000_01100_01011_01100_00000000000;// add
+instrmem[495] = 32'b001011_01100_01011_0000000000000000;// load
+instrmem[496] = 32'b010100_00000_00000_01101_00000000000;// in
+instrmem[497] = 32'b010110_01101_00000_01011_00000000000;// move
+instrmem[498] = 32'b001101_01100_01011_0000000000000000;// str
+instrmem[499] = 32'b001011_11011_01110_0000000000000010;// load
+instrmem[500] = 32'b001011_11011_01111_0000000000000010;// load
+instrmem[501] = 32'b001100_00000_10000_0000000000000001;// ldi
+instrmem[502] = 32'b000000_01111_10000_00001_00000000000;// add
+instrmem[503] = 32'b010110_00001_00000_01110_00000000000;// move
+instrmem[504] = 32'b001101_11011_01110_0000000000000010;// str
+instrmem[505] = 32'b010000_00000000000000000111101000;// jmp
+//L35
+instrmem[506] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[507] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[508] = 32'b010001_11111_00000_0000000000000000;// jr
+//varianciaVector
+instrmem[509] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[510] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[511] = 32'b001011_11011_00010_0000000000000010;// load
+instrmem[512] = 32'b001100_00000_00011_0000000000000000;// ldi
+instrmem[513] = 32'b010110_00011_00000_00010_00000000000;// move
+instrmem[514] = 32'b001101_11011_00010_0000000000000010;// str
+instrmem[515] = 32'b001011_11011_00100_0000000000000011;// load
+instrmem[516] = 32'b001100_00000_00101_0000000000000000;// ldi
+instrmem[517] = 32'b010110_00101_00000_00100_00000000000;// move
+instrmem[518] = 32'b001101_11011_00100_0000000000000011;// str
+instrmem[519] = 32'b001011_11011_00110_0000000000000100;// load
+instrmem[520] = 32'b001011_11011_00111_0000000000000000;// load
+instrmem[521] = 32'b010110_00111_00000_10001_00000000000;// move
+instrmem[522] = 32'b001011_11011_01000_0000000000000001;// load
+instrmem[523] = 32'b010110_01000_00000_10010_00000000000;// move
+instrmem[524] = 32'b000010_11011_11011_0000000000000110;// addi
+instrmem[525] = 32'b001100_00000_11111_0000001000010001;// ldi
+instrmem[526] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[527] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[528] = 32'b010000_00000000000000000101011110;// jmp
+instrmem[529] = 32'b010110_11110_00000_01001_00000000000;// move
+instrmem[530] = 32'b000010_11011_11011_1111111111111010;// addi
+instrmem[531] = 32'b010110_01001_00000_00110_00000000000;// move
+instrmem[532] = 32'b001101_11011_00110_0000000000000100;// str
+//L36
+instrmem[533] = 32'b001011_11011_01010_0000000000000010;// load
+instrmem[534] = 32'b001011_11011_01011_0000000000000001;// load
+instrmem[535] = 32'b000110_01010_01011_01100_00000000000;// slt
+instrmem[536] = 32'b001110_01100_00000_0000001000110001;// beq
+instrmem[537] = 32'b001011_11011_01101_0000000000000101;// load
+instrmem[538] = 32'b001011_11011_01111_0000000000000010;// load
+instrmem[539] = 32'b001011_11011_01110_0000000000000000;// load
+instrmem[540] = 32'b000000_01111_01110_01111_00000000000;// add
+instrmem[541] = 32'b001011_01111_01110_0000000000000000;// load
+instrmem[542] = 32'b001011_11011_10000_0000000000000100;// load
+instrmem[543] = 32'b000001_01110_10000_00001_00000000000;// sub
+instrmem[544] = 32'b010110_00001_00000_01101_00000000000;// move
+instrmem[545] = 32'b001101_11011_01101_0000000000000101;// str
+instrmem[546] = 32'b001011_11011_00010_0000000000000011;// load
+instrmem[547] = 32'b001011_11011_00011_0000000000000011;// load
+instrmem[548] = 32'b001011_11011_00100_0000000000000101;// load
+instrmem[549] = 32'b001011_11011_00101_0000000000000101;// load
+instrmem[550] = 32'b000100_00100_00101_00110_00000000000;// mult
+instrmem[551] = 32'b000000_00011_00110_00111_00000000000;// add
+instrmem[552] = 32'b010110_00111_00000_00010_00000000000;// move
+instrmem[553] = 32'b001101_11011_00010_0000000000000011;// str
+instrmem[554] = 32'b001011_11011_01000_0000000000000010;// load
+instrmem[555] = 32'b001011_11011_01001_0000000000000010;// load
+instrmem[556] = 32'b001100_00000_01010_0000000000000001;// ldi
+instrmem[557] = 32'b000000_01001_01010_01011_00000000000;// add
+instrmem[558] = 32'b010110_01011_00000_01000_00000000000;// move
+instrmem[559] = 32'b001101_11011_01000_0000000000000010;// str
+instrmem[560] = 32'b010000_00000000000000001000010101;// jmp
+//L37
+instrmem[561] = 32'b001011_11011_01100_0000000000000011;// load
+instrmem[562] = 32'b001011_11011_01101_0000000000000001;// load
+instrmem[563] = 32'b000101_01100_01101_01110_00000000000;// divi
+instrmem[564] = 32'b010110_01110_00000_11110_00000000000;// move
+instrmem[565] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[566] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[567] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[568] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[569] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[570] = 32'b010001_11111_00000_0000000000000000;// jr
+//menor
+instrmem[571] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[572] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[573] = 32'b001011_11011_01111_0000000000000000;// load
+instrmem[574] = 32'b001011_11011_10000_0000000000000001;// load
+instrmem[575] = 32'b011001_01111_10000_00001_00000000000;// sle
+instrmem[576] = 32'b001110_00001_00000_0000001001000111;// beq
+instrmem[577] = 32'b001011_11011_00010_0000000000000000;// load
+instrmem[578] = 32'b010110_00010_00000_11110_00000000000;// move
+instrmem[579] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[580] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[581] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[582] = 32'b010000_00000000000000001001001101;// jmp
+//L38
+instrmem[583] = 32'b001011_11011_00011_0000000000000001;// load
+instrmem[584] = 32'b010110_00011_00000_11110_00000000000;// move
+instrmem[585] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[586] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[587] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[588] = 32'b010000_00000000000000001001001101;// jmp
+//L39
+instrmem[589] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[590] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[591] = 32'b010001_11111_00000_0000000000000000;// jr
+//maior
+instrmem[592] = 32'b001101_11011_10001_0000000000000000;// str
+instrmem[593] = 32'b001101_11011_10010_0000000000000001;// str
+instrmem[594] = 32'b001011_11011_00100_0000000000000000;// load
+instrmem[595] = 32'b001011_11011_00101_0000000000000001;// load
+instrmem[596] = 32'b011011_00100_00101_00110_00000000000;// sgt
+instrmem[597] = 32'b001110_00110_00000_0000001001011100;// beq
+instrmem[598] = 32'b001011_11011_00111_0000000000000000;// load
+instrmem[599] = 32'b010110_00111_00000_11110_00000000000;// move
+instrmem[600] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[601] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[602] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[603] = 32'b010000_00000000000000001001100010;// jmp
+//L40
+instrmem[604] = 32'b001011_11011_01000_0000000000000001;// load
+instrmem[605] = 32'b010110_01000_00000_11110_00000000000;// move
+instrmem[606] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[607] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[608] = 32'b010001_11111_00000_0000000000000000;// jr
+instrmem[609] = 32'b010000_00000000000000001001100010;// jmp
+//L41
+instrmem[610] = 32'b000010_11101_11101_1111111111111111;// addi
+instrmem[611] = 32'b001011_11101_11111_0000000000000000;// load
+instrmem[612] = 32'b010001_11111_00000_0000000000000000;// jr
+//main
+instrmem[613] = 32'b001011_11011_01001_0000000000000000;// load
+instrmem[614] = 32'b010100_00000_00000_01010_00000000000;// in
+instrmem[615] = 32'b010110_01010_00000_01001_00000000000;// move
+instrmem[616] = 32'b001101_11011_01001_0000000000000000;// str
+//L42
+instrmem[617] = 32'b001011_11011_01011_0000000000000000;// load
+instrmem[618] = 32'b001100_00000_01100_0000000000000000;// ldi
+instrmem[619] = 32'b011011_01011_01100_01101_00000000000;// sgt
+instrmem[620] = 32'b001110_01101_00000_0000001111010010;// beq
+instrmem[621] = 32'b001011_11011_01110_0000000000000000;// load
+instrmem[622] = 32'b001100_00000_01111_0000000000000001;// ldi
+instrmem[623] = 32'b011010_01110_01111_10000_00000000000;// sge
+instrmem[624] = 32'b011001_01110_01111_00001_00000000000;// sle
+instrmem[625] = 32'b001000_10000_00001_00010_00000000000;// and
+instrmem[626] = 32'b001110_00010_00000_0000001010001011;// beq
+instrmem[627] = 32'b001011_11011_00011_0000000000000001;// load
+instrmem[628] = 32'b010100_00000_00000_00100_00000000000;// in
+instrmem[629] = 32'b010110_00100_00000_00011_00000000000;// move
+instrmem[630] = 32'b001101_11011_00011_0000000000000001;// str
+instrmem[631] = 32'b001011_11011_00101_0000000000000010;// load
+instrmem[632] = 32'b010100_00000_00000_00110_00000000000;// in
+instrmem[633] = 32'b010110_00110_00000_00101_00000000000;// move
+instrmem[634] = 32'b001101_11011_00101_0000000000000010;// str
+instrmem[635] = 32'b001011_11011_00111_0000000000000001;// load
+instrmem[636] = 32'b010110_00111_00000_10001_00000000000;// move
+instrmem[637] = 32'b001011_11011_01000_0000000000000010;// load
+instrmem[638] = 32'b010110_01000_00000_10010_00000000000;// move
+instrmem[639] = 32'b000010_11011_11011_0000000000000101;// addi
+instrmem[640] = 32'b001100_00000_11111_0000001010000100;// ldi
+instrmem[641] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[642] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[643] = 32'b010000_00000000000000000001111101;// jmp
+instrmem[644] = 32'b010110_11110_00000_01001_00000000000;// move
+instrmem[645] = 32'b000010_11011_11011_1111111111111011;// addi
+instrmem[646] = 32'b010110_01001_00000_10001_00000000000;// move
+instrmem[647] = 32'b010110_10001_00000_01010_00000000000;// move
+instrmem[648] = 32'b010101_01010_00000_0000000000000000;// out
+instrmem[649] = 32'b010010_00000000000000000000000000;// nop
+instrmem[650] = 32'b010000_00000000000000001111010001;// jmp
+//L43
+instrmem[651] = 32'b001011_11011_01011_0000000000000000;// load
+instrmem[652] = 32'b001100_00000_01100_0000000000000010;// ldi
+instrmem[653] = 32'b011010_01011_01100_01101_00000000000;// sge
+instrmem[654] = 32'b011001_01011_01100_01110_00000000000;// sle
+instrmem[655] = 32'b001000_01101_01110_01111_00000000000;// and
+instrmem[656] = 32'b001110_01111_00000_0000001011001010;// beq
+instrmem[657] = 32'b001011_11011_10000_0000000000000011;// load
+instrmem[658] = 32'b001100_00000_00001_0000000000000000;// ldi
+instrmem[659] = 32'b010110_00001_00000_10000_00000000000;// move
+instrmem[660] = 32'b001101_11011_10000_0000000000000011;// str
+//L44
+instrmem[661] = 32'b001011_11011_00010_0000000000000011;// load
+instrmem[662] = 32'b001100_00000_00011_0000000000000100;// ldi
+instrmem[663] = 32'b000110_00010_00011_00100_00000000000;// slt
+instrmem[664] = 32'b001110_00100_00000_0000001010100110;// beq
+instrmem[665] = 32'b001011_11011_00110_0000000000000011;// load
+instrmem[666] = 32'b000000_00110_11100_00110_00000000000;// add
+instrmem[667] = 32'b001011_00110_00101_0000000000000000;// load
+instrmem[668] = 32'b010100_00000_00000_00111_00000000000;// in
+instrmem[669] = 32'b010110_00111_00000_00101_00000000000;// move
+instrmem[670] = 32'b001101_00110_00101_0000000000000000;// str
+instrmem[671] = 32'b001011_11011_01000_0000000000000011;// load
+instrmem[672] = 32'b001011_11011_01001_0000000000000011;// load
+instrmem[673] = 32'b001100_00000_01010_0000000000000001;// ldi
+instrmem[674] = 32'b000000_01001_01010_01011_00000000000;// add
+instrmem[675] = 32'b010110_01011_00000_01000_00000000000;// move
+instrmem[676] = 32'b001101_11011_01000_0000000000000011;// str
+instrmem[677] = 32'b010000_00000000000000001010010101;// jmp
+//L45
+instrmem[678] = 32'b000010_11100_01100_0000000000000000;// addi
+instrmem[679] = 32'b010110_01100_00000_10001_00000000000;// move
+instrmem[680] = 32'b001100_00000_01101_0000000000000000;// ldi
+instrmem[681] = 32'b010110_01101_00000_10010_00000000000;// move
+instrmem[682] = 32'b001100_00000_01110_0000000000000100;// ldi
+instrmem[683] = 32'b010110_01110_00000_10011_00000000000;// move
+instrmem[684] = 32'b000010_11011_11011_0000000000000101;// addi
+instrmem[685] = 32'b001100_00000_11111_0000001010110001;// ldi
+instrmem[686] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[687] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[688] = 32'b010000_00000000000000000000111110;// jmp
+instrmem[689] = 32'b010110_11110_00000_01111_00000000000;// move
+instrmem[690] = 32'b000010_11011_11011_1111111111111011;// addi
+instrmem[691] = 32'b001011_11011_10000_0000000000000011;// load
+instrmem[692] = 32'b001100_00000_00001_0000000000000000;// ldi
+instrmem[693] = 32'b010110_00001_00000_10000_00000000000;// move
+instrmem[694] = 32'b001101_11011_10000_0000000000000011;// str
+//L46
+instrmem[695] = 32'b001011_11011_00010_0000000000000011;// load
+instrmem[696] = 32'b001100_00000_00011_0000000000000100;// ldi
+instrmem[697] = 32'b000110_00010_00011_00100_00000000000;// slt
+instrmem[698] = 32'b001110_00100_00000_0000001011001001;// beq
+instrmem[699] = 32'b001011_11011_00110_0000000000000011;// load
+instrmem[700] = 32'b000000_00110_11100_00110_00000000000;// add
+instrmem[701] = 32'b001011_00110_00101_0000000000000000;// load
+instrmem[702] = 32'b010110_00101_00000_10001_00000000000;// move
+instrmem[703] = 32'b010110_10001_00000_00111_00000000000;// move
+instrmem[704] = 32'b010101_00111_00000_0000000000000000;// out
+instrmem[705] = 32'b010010_00000000000000000000000000;// nop
+instrmem[706] = 32'b001011_11011_01000_0000000000000011;// load
+instrmem[707] = 32'b001011_11011_01001_0000000000000011;// load
+instrmem[708] = 32'b001100_00000_01010_0000000000000001;// ldi
+instrmem[709] = 32'b000000_01001_01010_01011_00000000000;// add
+instrmem[710] = 32'b010110_01011_00000_01000_00000000000;// move
+instrmem[711] = 32'b001101_11011_01000_0000000000000011;// str
+instrmem[712] = 32'b010000_00000000000000001010110111;// jmp
+//L47
+instrmem[713] = 32'b010000_00000000000000001111010000;// jmp
+//L48
+instrmem[714] = 32'b001011_11011_01100_0000000000000000;// load
+instrmem[715] = 32'b001100_00000_01101_0000000000000011;// ldi
+instrmem[716] = 32'b011010_01100_01101_01110_00000000000;// sge
+instrmem[717] = 32'b011001_01100_01101_01111_00000000000;// sle
+instrmem[718] = 32'b001000_01110_01111_10000_00000000000;// and
+instrmem[719] = 32'b001110_10000_00000_0000001011100010;// beq
+instrmem[720] = 32'b001011_11011_00001_0000000000000001;// load
+instrmem[721] = 32'b010100_00000_00000_00010_00000000000;// in
+instrmem[722] = 32'b010110_00010_00000_00001_00000000000;// move
+instrmem[723] = 32'b001101_11011_00001_0000000000000001;// str
+instrmem[724] = 32'b001011_11011_00011_0000000000000001;// load
+instrmem[725] = 32'b010110_00011_00000_10001_00000000000;// move
+instrmem[726] = 32'b000010_11011_11011_0000000000000101;// addi
+instrmem[727] = 32'b001100_00000_11111_0000001011011011;// ldi
+instrmem[728] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[729] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[730] = 32'b010000_00000000000000000010100100;// jmp
+instrmem[731] = 32'b010110_11110_00000_00100_00000000000;// move
+instrmem[732] = 32'b000010_11011_11011_1111111111111011;// addi
+instrmem[733] = 32'b010110_00100_00000_10001_00000000000;// move
+instrmem[734] = 32'b010110_10001_00000_00101_00000000000;// move
+instrmem[735] = 32'b010101_00101_00000_0000000000000000;// out
+instrmem[736] = 32'b010010_00000000000000000000000000;// nop
+instrmem[737] = 32'b010000_00000000000000001111001111;// jmp
+//L49
+instrmem[738] = 32'b001011_11011_00110_0000000000000000;// load
+instrmem[739] = 32'b001100_00000_00111_0000000000000100;// ldi
+instrmem[740] = 32'b011010_00110_00111_01000_00000000000;// sge
+instrmem[741] = 32'b011001_00110_00111_01001_00000000000;// sle
+instrmem[742] = 32'b001000_01000_01001_01010_00000000000;// and
+instrmem[743] = 32'b001110_01010_00000_0000001011111010;// beq
+instrmem[744] = 32'b001011_11011_01011_0000000000000001;// load
+instrmem[745] = 32'b010100_00000_00000_01100_00000000000;// in
+instrmem[746] = 32'b010110_01100_00000_01011_00000000000;// move
+instrmem[747] = 32'b001101_11011_01011_0000000000000001;// str
+instrmem[748] = 32'b001011_11011_01101_0000000000000001;// load
+instrmem[749] = 32'b010110_01101_00000_10001_00000000000;// move
+instrmem[750] = 32'b000010_11011_11011_0000000000000101;// addi
+instrmem[751] = 32'b001100_00000_11111_0000001011110011;// ldi
+instrmem[752] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[753] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[754] = 32'b010000_00000000000000000011000100;// jmp
+instrmem[755] = 32'b010110_11110_00000_01110_00000000000;// move
+instrmem[756] = 32'b000010_11011_11011_1111111111111011;// addi
+instrmem[757] = 32'b010110_01110_00000_10001_00000000000;// move
+instrmem[758] = 32'b010110_10001_00000_01111_00000000000;// move
+instrmem[759] = 32'b010101_01111_00000_0000000000000000;// out
+instrmem[760] = 32'b010010_00000000000000000000000000;// nop
+instrmem[761] = 32'b010000_00000000000000001111001110;// jmp
+//L50
+instrmem[762] = 32'b001011_11011_10000_0000000000000000;// load
+instrmem[763] = 32'b001100_00000_00001_0000000000000101;// ldi
+instrmem[764] = 32'b011010_10000_00001_00010_00000000000;// sge
+instrmem[765] = 32'b011001_10000_00001_00011_00000000000;// sle
+instrmem[766] = 32'b001000_00010_00011_00100_00000000000;// and
+instrmem[767] = 32'b001110_00100_00000_0000001100011000;// beq
+instrmem[768] = 32'b001011_11011_00101_0000000000000001;// load
+instrmem[769] = 32'b010100_00000_00000_00110_00000000000;// in
+instrmem[770] = 32'b010110_00110_00000_00101_00000000000;// move
+instrmem[771] = 32'b001101_11011_00101_0000000000000001;// str
+instrmem[772] = 32'b001011_11011_00111_0000000000000010;// load
+instrmem[773] = 32'b010100_00000_00000_01000_00000000000;// in
+instrmem[774] = 32'b010110_01000_00000_00111_00000000000;// move
+instrmem[775] = 32'b001101_11011_00111_0000000000000010;// str
+instrmem[776] = 32'b001011_11011_01001_0000000000000001;// load
+instrmem[777] = 32'b010110_01001_00000_10001_00000000000;// move
+instrmem[778] = 32'b001011_11011_01010_0000000000000010;// load
+instrmem[779] = 32'b010110_01010_00000_10010_00000000000;// move
+instrmem[780] = 32'b000010_11011_11011_0000000000000101;// addi
+instrmem[781] = 32'b001100_00000_11111_0000001100010001;// ldi
+instrmem[782] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[783] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[784] = 32'b010000_00000000000000001001010000;// jmp
+instrmem[785] = 32'b010110_11110_00000_01011_00000000000;// move
+instrmem[786] = 32'b000010_11011_11011_1111111111111011;// addi
+instrmem[787] = 32'b010110_01011_00000_10001_00000000000;// move
+instrmem[788] = 32'b010110_10001_00000_01100_00000000000;// move
+instrmem[789] = 32'b010101_01100_00000_0000000000000000;// out
+instrmem[790] = 32'b010010_00000000000000000000000000;// nop
+instrmem[791] = 32'b010000_00000000000000001111001101;// jmp
+//L51
+instrmem[792] = 32'b001011_11011_01101_0000000000000000;// load
+instrmem[793] = 32'b001100_00000_01110_0000000000000110;// ldi
+instrmem[794] = 32'b011010_01101_01110_01111_00000000000;// sge
+instrmem[795] = 32'b011001_01101_01110_10000_00000000000;// sle
+instrmem[796] = 32'b001000_01111_10000_00001_00000000000;// and
+instrmem[797] = 32'b001110_00001_00000_0000001100111100;// beq
+instrmem[798] = 32'b001011_11011_00010_0000000000000001;// load
+instrmem[799] = 32'b010100_00000_00000_00011_00000000000;// in
+instrmem[800] = 32'b010110_00011_00000_00010_00000000000;// move
+instrmem[801] = 32'b001101_11011_00010_0000000000000001;// str
+instrmem[802] = 32'b001011_11011_00100_0000000000000010;// load
+instrmem[803] = 32'b010100_00000_00000_00101_00000000000;// in
+instrmem[804] = 32'b010110_00101_00000_00100_00000000000;// move
+instrmem[805] = 32'b001101_11011_00100_0000000000000010;// str
+instrmem[806] = 32'b001011_11011_00110_0000000000000100;// load
+instrmem[807] = 32'b010100_00000_00000_00111_00000000000;// in
+instrmem[808] = 32'b010110_00111_00000_00110_00000000000;// move
+instrmem[809] = 32'b001101_11011_00110_0000000000000100;// str
+instrmem[810] = 32'b001011_11011_01000_0000000000000001;// load
+instrmem[811] = 32'b010110_01000_00000_10001_00000000000;// move
+instrmem[812] = 32'b001011_11011_01001_0000000000000010;// load
+instrmem[813] = 32'b010110_01001_00000_10010_00000000000;// move
+instrmem[814] = 32'b001011_11011_01010_0000000000000100;// load
+instrmem[815] = 32'b010110_01010_00000_10011_00000000000;// move
+instrmem[816] = 32'b000010_11011_11011_0000000000000101;// addi
+instrmem[817] = 32'b001100_00000_11111_0000001100110101;// ldi
+instrmem[818] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[819] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[820] = 32'b010000_00000000000000000100001010;// jmp
+instrmem[821] = 32'b010110_11110_00000_01011_00000000000;// move
+instrmem[822] = 32'b000010_11011_11011_1111111111111011;// addi
+instrmem[823] = 32'b010110_01011_00000_10001_00000000000;// move
+instrmem[824] = 32'b010110_10001_00000_01100_00000000000;// move
+instrmem[825] = 32'b010101_01100_00000_0000000000000000;// out
+instrmem[826] = 32'b010010_00000000000000000000000000;// nop
+instrmem[827] = 32'b010000_00000000000000001111001100;// jmp
+//L52
+instrmem[828] = 32'b001011_11011_01101_0000000000000000;// load
+instrmem[829] = 32'b001100_00000_01110_0000000000000111;// ldi
+instrmem[830] = 32'b011010_01101_01110_01111_00000000000;// sge
+instrmem[831] = 32'b011001_01101_01110_10000_00000000000;// sle
+instrmem[832] = 32'b001000_01111_10000_00001_00000000000;// and
+instrmem[833] = 32'b001110_00001_00000_0000001101100111;// beq
+instrmem[834] = 32'b001011_11011_00010_0000000000000011;// load
+instrmem[835] = 32'b001100_00000_00011_0000000000000000;// ldi
+instrmem[836] = 32'b010110_00011_00000_00010_00000000000;// move
+instrmem[837] = 32'b001101_11011_00010_0000000000000011;// str
+//L53
+instrmem[838] = 32'b001011_11011_00100_0000000000000011;// load
+instrmem[839] = 32'b001100_00000_00101_0000000000000100;// ldi
+instrmem[840] = 32'b000110_00100_00101_00110_00000000000;// slt
+instrmem[841] = 32'b001110_00110_00000_0000001101010111;// beq
+instrmem[842] = 32'b001011_11011_01000_0000000000000011;// load
+instrmem[843] = 32'b000000_01000_11100_01000_00000000000;// add
+instrmem[844] = 32'b001011_01000_00111_0000000000000000;// load
+instrmem[845] = 32'b010100_00000_00000_01001_00000000000;// in
+instrmem[846] = 32'b010110_01001_00000_00111_00000000000;// move
+instrmem[847] = 32'b001101_01000_00111_0000000000000000;// str
+instrmem[848] = 32'b001011_11011_01010_0000000000000011;// load
+instrmem[849] = 32'b001011_11011_01011_0000000000000011;// load
+instrmem[850] = 32'b001100_00000_01100_0000000000000001;// ldi
+instrmem[851] = 32'b000000_01011_01100_01101_00000000000;// add
+instrmem[852] = 32'b010110_01101_00000_01010_00000000000;// move
+instrmem[853] = 32'b001101_11011_01010_0000000000000011;// str
+instrmem[854] = 32'b010000_00000000000000001101000110;// jmp
+//L54
+instrmem[855] = 32'b000010_11100_01110_0000000000000000;// addi
+instrmem[856] = 32'b010110_01110_00000_10001_00000000000;// move
+instrmem[857] = 32'b001100_00000_01111_0000000000000100;// ldi
+instrmem[858] = 32'b010110_01111_00000_10010_00000000000;// move
+instrmem[859] = 32'b000010_11011_11011_0000000000000101;// addi
+instrmem[860] = 32'b001100_00000_11111_0000001101100000;// ldi
+instrmem[861] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[862] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[863] = 32'b010000_00000000000000000101011110;// jmp
+instrmem[864] = 32'b010110_11110_00000_10000_00000000000;// move
+instrmem[865] = 32'b000010_11011_11011_1111111111111011;// addi
+instrmem[866] = 32'b010110_10000_00000_10001_00000000000;// move
+instrmem[867] = 32'b010110_10001_00000_00001_00000000000;// move
+instrmem[868] = 32'b010101_00001_00000_0000000000000000;// out
+instrmem[869] = 32'b010010_00000000000000000000000000;// nop
+instrmem[870] = 32'b010000_00000000000000001111001011;// jmp
+//L55
+instrmem[871] = 32'b001011_11011_00010_0000000000000000;// load
+instrmem[872] = 32'b001100_00000_00011_0000000000001000;// ldi
+instrmem[873] = 32'b011010_00010_00011_00100_00000000000;// sge
+instrmem[874] = 32'b011001_00010_00011_00101_00000000000;// sle
+instrmem[875] = 32'b001000_00100_00101_00110_00000000000;// and
+instrmem[876] = 32'b001110_00110_00000_0000001101111111;// beq
+instrmem[877] = 32'b001011_11011_00111_0000000000000001;// load
+instrmem[878] = 32'b010100_00000_00000_01000_00000000000;// in
+instrmem[879] = 32'b010110_01000_00000_00111_00000000000;// move
+instrmem[880] = 32'b001101_11011_00111_0000000000000001;// str
+instrmem[881] = 32'b001011_11011_01001_0000000000000001;// load
+instrmem[882] = 32'b010110_01001_00000_10001_00000000000;// move
+instrmem[883] = 32'b000010_11011_11011_0000000000000101;// addi
+instrmem[884] = 32'b001100_00000_11111_0000001101111000;// ldi
+instrmem[885] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[886] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[887] = 32'b010000_00000000000000000110000110;// jmp
+instrmem[888] = 32'b010110_11110_00000_01010_00000000000;// move
+instrmem[889] = 32'b000010_11011_11011_1111111111111011;// addi
+instrmem[890] = 32'b010110_01010_00000_10001_00000000000;// move
+instrmem[891] = 32'b010110_10001_00000_01011_00000000000;// move
+instrmem[892] = 32'b010101_01011_00000_0000000000000000;// out
+instrmem[893] = 32'b010010_00000000000000000000000000;// nop
+instrmem[894] = 32'b010000_00000000000000001111001010;// jmp
+//L56
+instrmem[895] = 32'b001011_11011_01100_0000000000000000;// load
+instrmem[896] = 32'b001100_00000_01101_0000000000001001;// ldi
+instrmem[897] = 32'b011010_01100_01101_01110_00000000000;// sge
+instrmem[898] = 32'b011001_01100_01101_01111_00000000000;// sle
+instrmem[899] = 32'b001000_01110_01111_10000_00000000000;// and
+instrmem[900] = 32'b001110_10000_00000_0000001110011101;// beq
+instrmem[901] = 32'b001011_11011_00001_0000000000000001;// load
+instrmem[902] = 32'b010100_00000_00000_00010_00000000000;// in
+instrmem[903] = 32'b010110_00010_00000_00001_00000000000;// move
+instrmem[904] = 32'b001101_11011_00001_0000000000000001;// str
+instrmem[905] = 32'b001011_11011_00011_0000000000000010;// load
+instrmem[906] = 32'b010100_00000_00000_00100_00000000000;// in
+instrmem[907] = 32'b010110_00100_00000_00011_00000000000;// move
+instrmem[908] = 32'b001101_11011_00011_0000000000000010;// str
+instrmem[909] = 32'b001011_11011_00101_0000000000000001;// load
+instrmem[910] = 32'b010110_00101_00000_10001_00000000000;// move
+instrmem[911] = 32'b001011_11011_00110_0000000000000010;// load
+instrmem[912] = 32'b010110_00110_00000_10010_00000000000;// move
+instrmem[913] = 32'b000010_11011_11011_0000000000000101;// addi
+instrmem[914] = 32'b001100_00000_11111_0000001110010110;// ldi
+instrmem[915] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[916] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[917] = 32'b010000_00000000000000001000111011;// jmp
+instrmem[918] = 32'b010110_11110_00000_00111_00000000000;// move
+instrmem[919] = 32'b000010_11011_11011_1111111111111011;// addi
+instrmem[920] = 32'b010110_00111_00000_10001_00000000000;// move
+instrmem[921] = 32'b010110_10001_00000_01000_00000000000;// move
+instrmem[922] = 32'b010101_01000_00000_0000000000000000;// out
+instrmem[923] = 32'b010010_00000000000000000000000000;// nop
+instrmem[924] = 32'b010000_00000000000000001111001001;// jmp
+//L57
+instrmem[925] = 32'b001011_11011_01001_0000000000000000;// load
+instrmem[926] = 32'b001100_00000_01010_0000000000001010;// ldi
+instrmem[927] = 32'b011010_01001_01010_01011_00000000000;// sge
+instrmem[928] = 32'b011001_01001_01010_01100_00000000000;// sle
+instrmem[929] = 32'b001000_01011_01100_01101_00000000000;// and
+instrmem[930] = 32'b001110_01101_00000_0000001111001000;// beq
+instrmem[931] = 32'b001011_11011_01110_0000000000000011;// load
+instrmem[932] = 32'b001100_00000_01111_0000000000000000;// ldi
+instrmem[933] = 32'b010110_01111_00000_01110_00000000000;// move
+instrmem[934] = 32'b001101_11011_01110_0000000000000011;// str
+//L58
+instrmem[935] = 32'b001011_11011_10000_0000000000000011;// load
+instrmem[936] = 32'b001100_00000_00001_0000000000000100;// ldi
+instrmem[937] = 32'b000110_10000_00001_00010_00000000000;// slt
+instrmem[938] = 32'b001110_00010_00000_0000001110111000;// beq
+instrmem[939] = 32'b001011_11011_00100_0000000000000011;// load
+instrmem[940] = 32'b000000_00100_11100_00100_00000000000;// add
+instrmem[941] = 32'b001011_00100_00011_0000000000000000;// load
+instrmem[942] = 32'b010100_00000_00000_00101_00000000000;// in
+instrmem[943] = 32'b010110_00101_00000_00011_00000000000;// move
+instrmem[944] = 32'b001101_00100_00011_0000000000000000;// str
+instrmem[945] = 32'b001011_11011_00110_0000000000000011;// load
+instrmem[946] = 32'b001011_11011_00111_0000000000000011;// load
+instrmem[947] = 32'b001100_00000_01000_0000000000000001;// ldi
+instrmem[948] = 32'b000000_00111_01000_01001_00000000000;// add
+instrmem[949] = 32'b010110_01001_00000_00110_00000000000;// move
+instrmem[950] = 32'b001101_11011_00110_0000000000000011;// str
+instrmem[951] = 32'b010000_00000000000000001110100111;// jmp
+//L59
+instrmem[952] = 32'b000010_11100_01010_0000000000000000;// addi
+instrmem[953] = 32'b010110_01010_00000_10001_00000000000;// move
+instrmem[954] = 32'b001100_00000_01011_0000000000000100;// ldi
+instrmem[955] = 32'b010110_01011_00000_10010_00000000000;// move
+instrmem[956] = 32'b000010_11011_11011_0000000000000101;// addi
+instrmem[957] = 32'b001100_00000_11111_0000001111000001;// ldi
+instrmem[958] = 32'b001101_11101_11111_0000000000000000;// str
+instrmem[959] = 32'b000010_11101_11101_0000000000000001;// addi
+instrmem[960] = 32'b010000_00000000000000000111111101;// jmp
+instrmem[961] = 32'b010110_11110_00000_01100_00000000000;// move
+instrmem[962] = 32'b000010_11011_11011_1111111111111011;// addi
+instrmem[963] = 32'b010110_01100_00000_10001_00000000000;// move
+instrmem[964] = 32'b010110_10001_00000_01101_00000000000;// move
+instrmem[965] = 32'b010101_01101_00000_0000000000000000;// out
+instrmem[966] = 32'b010010_00000000000000000000000000;// nop
+instrmem[967] = 32'b010000_00000000000000001111001000;// jmp
+//L60
+//L61
+instrmem[968] = 32'b010000_00000000000000001111001001;// jmp
+//L62
+instrmem[969] = 32'b010000_00000000000000001111001010;// jmp
+//L63
+instrmem[970] = 32'b010000_00000000000000001111001011;// jmp
+//L64
+instrmem[971] = 32'b010000_00000000000000001111001100;// jmp
+//L65
+instrmem[972] = 32'b010000_00000000000000001111001101;// jmp
+//L66
+instrmem[973] = 32'b010000_00000000000000001111001110;// jmp
+//L67
+instrmem[974] = 32'b010000_00000000000000001111001111;// jmp
+//L68
+instrmem[975] = 32'b010000_00000000000000001111010000;// jmp
+//L69
+instrmem[976] = 32'b010000_00000000000000001111010001;// jmp
+//L70
+instrmem[977] = 32'b010000_00000000000000001001101001;// jmp
+//L71
+instrmem[978] = 32'b001011_11011_01110_0000000000000000;// load
+instrmem[979] = 32'b010100_00000_00000_01111_00000000000;// in
+instrmem[980] = 32'b010110_01111_00000_01110_00000000000;// move
+instrmem[981] = 32'b001101_11011_01110_0000000000000000;// str
+instrmem[982] = 32'b010000_00000000000000001111010111;// jmp
+//end
+instrmem[983] = 32'b010011_00000000000000000000000000;// halt

@@ -8,8 +8,7 @@ void output(int x)
 
 }
 
-int vet[ 4 ];
-int vetaux[ 4 ];
+int vet[4];
 
 int minloc ( int a[], int low, int high )
 {	int i; int x; int k;
@@ -69,26 +68,12 @@ int fibonacci(int n){
     }
 }
 
-void extremosVector(int vec[], int size){
-    int i; int menor; int maior;
-    i = 1;
-    menor = maior = vec[0];
-    while(i < size){
-        if(vec[i] < menor) menor = vec[i];
-        else if (vec[i] > maior) maior = vec[i];
-        i = i + 1;        
-    }
-    output(menor);
-    output(maior);
-}
-
 int calculadora(int a, int b, int op){
     if (op == 1) return a+b;
     else if (op == 2) return a-b;
     else if (op == 3) return a*b;
     else if (op == 4) return a/b;
     else if (op == 5) return a-a/b*b; /* mod(a,b) */
-    else if (op == 6) return a*b/100; /* porcentagem(a,b) */
 }
 
 int mediaVector(int vec[], int size){
@@ -103,45 +88,93 @@ int mediaVector(int vec[], int size){
 
 int parimpar(int x)
 {
-	if ((a-a/2*2)==0)
+	if ((x-x/2*2)==0)
 		return 1;
 	else
 		return 0;
 }
 
-int somavetor(int vec1[], int vec2[], size)
+int somavetor(int vec[], int vecaux[], int size)
 {
-	int i=0;
+	int i;
+    i=0;
 	while(i<size)
 	{
-		vet[i] = vet[i]+vet2[i] ;
+		vec[i] = vec[i]+vecaux[i] ;
 		i = i+1;
 	}
 }
 
-int outputvec(int vet[], size)
+int outputvec(int vec[], int size)
 {
-	i=0;
+	int i;
+    i=0;
 	while(i<size)
 	{
-		output(vet[i]);
+		output(vec[i]);
 		i=i+1;
 	}
+}
+
+int inputvector(int vec[],int size)
+{
+    int i;
+    i=0;
+    while(i<size){
+        vec[i] = input();
+        i = i+1;
+    }
+}
+
+int varianciaVector(int vec[], int size){
+    int i; int total; int media; int aux;
+    i = 0; total = 0;
+    media = mediaVector(vec,size);
+    while(i < size){
+        aux = vec[i] - media;
+        total = total + (aux*aux);
+        i = i + 1;        
+    }
+    return total/size;
+}
+
+int menor (int u, int v)
+{
+    if (u <= v)
+    {
+        return u;
+    }
+    else
+    {
+        return v;
+    }
+}
+
+int maior (int u, int v)
+{
+    if (u > v)
+    {
+        return u;
+    }
+    else
+    {
+        return v;
+    }
 }
 
 void main (void)
 {
     int type;
-    int x; int y; int i;
+    int x; int y; int i; int z;
     
     type = input();
     while(type>0)
     {
-        if(type==1){ 
+        if(type==1){ /*gcd*/
             	x = input(); y = input();
 	            output(gcd(x,y));
         }
-        else if (type==2){
+        else if (type==2){ /*selectionsort*/
         		i=0;
            		while (i < 4){
 		    		vet[i] = input();
@@ -152,65 +185,59 @@ void main (void)
 	    		while (i < 4){
 					output(vet[i]);
 					i = i + 1;
-	    		}
+	    		}	    		
     	}
-			else if(type==3)
+			else if(type==3) /*fatorial*/
 			{
 				x = input();
 				output(fatorial(x));
 			}
-				else if(type==4)
+				else if(type==4) /*fibonacci*/
 				{
 					x = input();
 					output(fibonacci(x));
 				}
-					else if(type==5)
+					else if(type==5) /*maior*/
 					{
-						 i=0;
-						 while (i < 4){
-						 vet[i] = input();
-						 i = i + 1;
-						 }
-						 extremosVector(vet, 4);
+                        x= input();
+                        y= input();
+                        output(maior(x,y));
 					}
-						else if(type==6)
+						else if(type==6) /*calculadora*/
 						{
 							x = input();
 							y= input();
 							z= input();
 							output(calculadora(x,y,z));
 						}
-							else if(type==7)
+							else if(type==7)  /*mediaVector*/
 							{
 								i=0;
-								while (i < 4){
-								vet[i] = input();
-								i = i + 1;
-								}
+           		                while (i < 4){
+		    		                 vet[i] = input();
+		    		                 i = i + 1;
+	    		                }
 								output(mediaVector(vet,4));
 							}
-								else if(type==8)
+								else if(type==8) /*par ou impar*/
 								{
-									int x;
 									x=input();
-									ouput(parimpar(x));
+									output(parimpar(x));
 								}
-									else if(type==9)
+									else if(type==9) /*menor*/
+									{
+										x= input();
+                                        y= input();
+                                        output(menor(x,y));
+									}
+									else if(type==10) 
 									{
 										i=0;
-										while (i < 4){
-										vet[i] = input();
-										i = i + 1;
-										}
-										while (i < 4){
-										vet2[i] = input();
-										i = i + 1;
-										}
-										somavetor(vet, vet2, 4);
-									}
-									else if(type==10)
-									{
-										outputvec(vet,4);
+           		                        while (i < 4){
+		    		                     vet[i] = input();
+		    		                    i = i + 1;
+	    		                        }
+                                        output(varianciaVector(vet,4));
 									}
 					}
 

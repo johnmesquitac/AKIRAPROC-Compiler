@@ -139,7 +139,7 @@ void extremosVector(int vec[], int size){
 /* Aux Function */
 void inputVector(int vec[], int size){
     int i;
-    i = 0;
+    i = 0
     while(i < size){
         vec[i] = input();
         i = i + 1;        
